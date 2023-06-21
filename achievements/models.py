@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.text import slugify
 
 
 NIVELES = (
@@ -9,41 +8,33 @@ NIVELES = (
 )
 
 
-class Logro(models.Model):
+class Achievement(models.Model):
     """Un modelo representando los logros de un usuario."""
-    nombre = models.CharField(max_length=100, blank=False)
-    descripcion = models.TextField()
-    insignia = models.ImageField(upload_to='images/logros')
-    nivel = models.IntegerField(choices=NIVELES)
-    requisitos = models.TextField()
-    owner = models.ManyToManyField('auth.User', related_name='logros', through='UserLogro')
-    slug = models.SlugField(max_length=100, unique=True)
+    name = models.CharField(max_length=50)
+    description = models.TextField(max_length=200)
+    badge = models.ImageField(upload_to='images/logros', null=True)
+    bonus = models.IntegerField()
+    level = models.IntegerField(choices=NIVELES)
 
     class Meta:
-        verbose_name = 'Logro'
-        verbose_name_plural = 'Logros'
+        verbose_name = 'Achievement'
+        verbose_name_plural = 'Achievements'
 
     def __str__(self):
         """Retorna el nombre del logro."""
-        return self.nombre
-    
-    def save(self, *args, **kwargs):
-        """Genera el slug a partir del nombre del logro."""
-        self.slug = slugify(self.nombre)
-        super().save(*args, **kwargs)
+        return self.name
 
 
-class UserLogro(models.Model):
+class UserAchievement(models.Model):
     """Un modelo representando la relacion entre usuarios y Logro."""
-    user = models.ForeignKey('auth.User', related_name='userLogros', on_delete=models.CASCADE)
-    logro = models.ForeignKey(Logro, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
-    nivel = models.IntegerField(choices=NIVELES)
+    user = models.ForeignKey('auth.User', related_name='user_achievements', on_delete=models.CASCADE)
+    achievement = models.ForeignKey(Achievement, related_name='achievements', on_delete=models.CASCADE)
+    date_achieved = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name='User Logro'
-        verbose_name_plural = 'User Logros'
+        verbose_name='User Achievement'
+        verbose_name_plural = 'User Achievements'
 
     def __str__(self):
         """Retorna el logro de un usuario con su fecha y nivel."""
-        return f'{self.user.username} - {self.logro.nombre} - {self.fecha} - {self.nivel}'
+        return f'{self.user.username} - {self.achievement}'

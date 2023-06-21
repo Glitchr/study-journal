@@ -2,32 +2,28 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 from .models import UserProfile
+from courses.serializers import CourseSerializer
 
 
-class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     """
     Un serializador para el modelo UserProfile que incluye
     los campos relacionados.
     """
-    tareas = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    temas = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    cursos = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    progreso = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    logros = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    user_logros = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ['tareas', 'temas', 'cursos', 'progreso', 'logros', 'user_logros']
+        fields = ['avatar', 'bio', 'birth_date']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """Un serializador para el modelo User que incluye el campo de avatar."""
     profile = UserProfileSerializer()
+    courses = CourseSerializer(many=True, read_only=True)    
 
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'profile']
+        fields = ['url', 'username', 'email', 'groups', 'profile', 'courses']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

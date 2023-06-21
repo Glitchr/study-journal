@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'subjects',
     'courses',
     'achievements',
-    'progress',
     'categories',
+    'timer',
     
     'django.contrib.admin',
     'django.contrib.auth',

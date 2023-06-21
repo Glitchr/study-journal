@@ -17,20 +17,40 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from accounts import views
+
+from accounts.views import UserViewSet, GroupViewSet
+from achievements.views import AchievementViewSet
+from categories.views import CategoryViewSet
+from courses.views import CourseViewSet
+from subjects.views import SubjectViewSet
+from tasks.views import TaskViewSet
+from timer.views import PomodoroViewSet
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-router.register(r'userprofiles', views.UserProfileViewSet)
+# Accounts app
+router.register(r'users', UserViewSet)
+router.register(r'groups', GroupViewSet)
+# Achievements app
+router.register(r'achievements', AchievementViewSet)
+# Categories app
+router.register(r'categories', CategoryViewSet)
+# Courses app
+router.register(r'courses', CourseViewSet)
+# Subjects app
+router.register(r'subjects', SubjectViewSet)
+# Tasks app
+router.register(r'tasks', TaskViewSet)
+# Timer app
+router.register(r'timer', PomodoroViewSet)
+
 
 # Connectamos nuestra API utilizando el enrutamiento automático de URL.
 # Además, incluimos URLs de acceso para la API navegable.
 urlpatterns = [
     # Sitio admin
     path('admin/', admin.site.urls),
-    # 
-    path('', include(router.urls)),
+    # Root API
+    path('api/', include(router.urls)),
     # Login API
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

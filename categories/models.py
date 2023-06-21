@@ -1,14 +1,14 @@
 from django.db import models
 
 
-class Categoria(models.Model):
+class Category(models.Model):
     """Un modelo representando las categorias de las asignatuas y cursos."""
-    nombre = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True)
 
     class Meta:
-        verbose_name = 'Categoria'
-        verbose_name_plural = 'Categorias'
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
 
     def __str__(self):
         """Retorna el nombre de la categoria."""
-        return self.nombre
+        return self.name

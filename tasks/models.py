@@ -1,44 +1,39 @@
-from datetime import timedelta
-
 from django.db import models
-from django.utils.text import slugify
 
-from subjects.models import Tema
+from subjects.models import Subject
+from timer.models import Pomodoro
 
 
 STATUS = (
     ('pe', 'Pendiente'),
     ('ep', 'En progreso'),
     ('co', 'Completado'),
+    ('sa', 'Saltado'),
 )
 
 
-class Tarea(models.Model):
-    """
-    Un modelo representando tareas que se pueden crear, actualizar,
-    ver y borrar.
-    """
-    nombre = models.CharField(max_length=100, blank=True)
-    descripcion = models.TextField()
-    deadline = models.DateTimeField(blank=True)
+class Task(models.Model):
+    """Un modelo representando una tarea."""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
     status = models.CharField(choices=STATUS, default='pe', max_length=20)
-    owner = models.ForeignKey('auth.User', related_name='tareas', on_delete=models.CASCADE)
-    tema = models.ForeignKey(Tema, related_name='tareas', on_delete=models.CASCADE)
-    creado = models.DateTimeField(auto_now_add=True)
-    tiempo = models.DurationField(default=timedelta(25))
-    pausado = models.DurationField(default=timedelta(5))
-    total = models.DurationField(default=timedelta())
+    user = models.ForeignKey('auth.User', related_name='tasks', on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, related_name='tasks', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)    
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    due_date = models.DateField(blank=True, null=True)
+    timer = models.OneToOneField(Pomodoro, related_name='task', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
-        ordering = ['creado']
-        verbose_name = 'tarea'
-        verbose_name_plural = 'tareas'
+        ordering = ['created']
+        verbose_name = 'Tarea'
+        verbose_name_plural = 'Tareas'
 
-    def __str__(self): 
+    def __str__(self):
         """Retorna el nombre de la tarea."""
-        return self.nombre
-
-    def save(self, *args, **kwargs):
-        """Genera el slug a partir del nombre de la tarea."""
-        self.slug = slugify(self.nombre)
-        super().save(*args, **kwargs)
+        return self.name
+    
+    def get_total_time(self):
+        """Retorna el tiempo total gastado en la tarea."""
+        return self.timer.duration
