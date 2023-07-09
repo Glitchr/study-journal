@@ -10,7 +10,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     Un serializador para el modelo UserProfile que incluye
     los campos relacionados.
     """
-
     class Meta:
         model = UserProfile
         fields = ['avatar', 'bio', 'birth_date']
@@ -23,7 +22,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'profile', 'courses']
+        fields = ['url', 'username', 'email', 'profile', 'courses']
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile')
+        user = User.objects.create_user(**validated_data)
+        UserProfile.objects.get_or_create(user=user, defaults=profile_data)
+        return user
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

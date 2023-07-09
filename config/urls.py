@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework.authtoken import views
 
 from accounts.views import UserViewSet, GroupViewSet
 from achievements.views import AchievementViewSet
@@ -53,4 +54,6 @@ urlpatterns = [
     path('api/', include(router.urls)),
     # Login API
     path('api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # Token endpoint
+    path('api/auth/token/', views.obtain_auth_token),
 ]

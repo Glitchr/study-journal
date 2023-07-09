@@ -8,4 +8,4 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """API endpoint que permite ver o editar las categorias."""
     queryset = Category.objects.all().order_by('name')
     serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]

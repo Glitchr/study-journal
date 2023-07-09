@@ -19,3 +19,11 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
             'url', 'user', 'name', 'description', 'due_date', 'status',
             'created', 'subject', 'start_date', 'end_date', 'total_time',
         ]
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request:
+            user = request.user
+            if not user.is_staff:
+                self.fields['subject'].queryset = self.fields['subject'].queryset.filter(user=user)

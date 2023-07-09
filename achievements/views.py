@@ -10,7 +10,7 @@ class AchievementViewSet(viewsets.ModelViewSet):
     """
     queryset = Achievement.objects.all()
     serializer_class = AchievementSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class UserAchievementViewSet(viewsets.ModelViewSet):
