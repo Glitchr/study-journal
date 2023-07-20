@@ -3,11 +3,11 @@ ll_env/
 __pycache__/
 .vscode/
 images/
-/node_modules
-/.pnp
+node_modules/
+.pnp/
 .pnp.js
-/coverage
-/build
+coverage/
+build/
 .DS_Store
 .env.local
 .env.development.local

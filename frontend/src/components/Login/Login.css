@@ -1,0 +1,25 @@
+.login-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+ 
+.login-form-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.logout-text {
+  margin-top: 225px;
+}
+
+body {
+  height: 100%;
+}

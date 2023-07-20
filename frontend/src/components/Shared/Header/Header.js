@@ -1,33 +1,30 @@
 import React from 'react';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link, useNavigate } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 
-import './Header.css';
+import './Shared.css';
 
 
 function Header({
-  client,
   currentUser,
   setCurrentUser,
 }) {
-  function submitLogout(e) {
-    e.preventDefault();
-    client
-      .post('/api/logout', { withCredentials: true })
-      .then(function (res) {
-        setCurrentUser(false);
-        // Remove the token from local storage
-        localStorage.removeItem('token');
-      });
+  const navigate = useNavigate();
+  
+  const submitLogout = (e) => {
+    setCurrentUser(false);
+    // Remove the token from local storage
+    localStorage.removeItem('token');
+    navigate('/logout');
   }
 
   return (
       <>
-        <Navbar className="bg-lime-green">
+        <Navbar>
           <Container>
             <Navbar.Brand>
               <Link to="/" className="navbar-brand-link">
@@ -47,10 +44,15 @@ function Header({
               {currentUser ? (
                 <>
                   <Navbar.Text>Conectado como: {currentUser}</Navbar.Text>
+                  <Navbar.Text className="">
+                    <Link to="/courses">
+                      <Button variant="light" className="ms-3">Mis cursos</Button>
+                    </Link>
+                  </Navbar.Text>
                   <Navbar.Text>
                     <form onSubmit={(e) => submitLogout(e)}>
-                      <Button type="submit" variant="light">
-                        Cerrar sesion
+                      <Button type="submit" variant="light" className="ms-3">
+                        Cerrar sesión
                       </Button>
                     </form>
                   </Navbar.Text>
@@ -59,11 +61,12 @@ function Header({
                 <>
                   <Navbar.Text>
                     <Link to="/login">
-                      <Button variant="light">Iniciar sesion</Button>
+                      <Button variant="light" className='me-3'>Iniciar sesión</Button>
+
                     </Link>
                   </Navbar.Text>
                   <Navbar.Text>
-                    <Link to="/register">
+                    <Link to="/signup">
                       <Button variant="light">Registrarse</Button>
                     </Link>
                   </Navbar.Text>
