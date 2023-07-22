@@ -1,0 +1,12 @@
+.courses-nav {
+    height: 200px;
+}
+
+.nav-border {
+    border-right: 1px solid #ddd;
+    width: 325px;
+}
+
+.indent {
+    padding-left: 2rem;
+}

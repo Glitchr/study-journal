@@ -73,7 +73,6 @@ function App() {
                   setEmail={setEmail}
                   password={password}
                   setPassword={setPassword}
-                  errorMessage={errorMessage}
                   setErrorMessage={setErrorMessage}
                   setCurrentUser={setCurrentUser}
                 />
