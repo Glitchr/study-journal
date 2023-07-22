@@ -17,6 +17,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
         if user.is_staff:
-            return self.queryset
+            return self.queryset.select_related('subject__course')
         else:
-            return self.queryset.filter(user=user)
+            return self.queryset.filter(user=user).select_related('subject__course')
