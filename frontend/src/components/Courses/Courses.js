@@ -7,11 +7,55 @@ import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 
 import './Courses.css'
 
 
-function CourseNavbar({ courses }) {
+function CourseDetails({ course }) {
+  const STATUS = {
+    'pe': 'Pendiente',
+    'ep': 'En progreso',
+    'co': 'Completado',
+    'sa': 'Saltado',
+  };
+
+  return (
+    <Card>
+      <Card.Header>{course.name}</Card.Header>
+      <Card.Body>
+        <Card.Title>Descripción</Card.Title>
+        <Card.Text>{course.description}</Card.Text>
+
+        <Row className='mb-3'>
+          <Col>
+            <Card.Title>Start Date</Card.Title>
+            <Card.Text>{course.start_date}</Card.Text>
+          </Col>
+
+          <Col>
+            <Card.Title>End Date</Card.Title>
+            <Card.Text>{course.end_date}</Card.Text>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <Card.Title>Estado</Card.Title>
+            <Card.Text>{STATUS[course.status]}</Card.Text>
+          </Col>
+
+          <Col>
+            <Card.Title>Categoria</Card.Title>
+            <Card.Text>{course.category.name}</Card.Text>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
+  );
+}
+
+function CourseNavbar({ courses, onCourseClick }) {
   const [openCourses, setOpenCourses] = useState({});
   const [openSubjects, setOpenSubject] = useState({});
 
@@ -34,7 +78,9 @@ function CourseNavbar({ courses }) {
       {courses.map((course) => (
         <div key={course.url}>
           <div className='d-flex justify-content-between'>
-            <Button variant='link'>{course.name}</Button>
+            <Button variant='link' onClick={() => onCourseClick(course)}>
+              {course.name}
+            </Button>
             <Button variant='link' onClick={() => handleCourseClick(course.url)}>
               {openCourses[course.url] ? <FaChevronUp /> : <FaChevronDown />}
             </Button>
@@ -172,65 +218,65 @@ function CreateCourse({ client }) {
 }
 
 
-function Courses({
-  client,
-  currentUser,
-}) {
+function Courses({ client, currentUser }) {
   const [courses, setCourses] = useState([]);
   const [showCreateCourse, setShowCreateCourse] = useState(false);
-  const hasCourses = courses.length > 0;
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   const handleCreateCourseClick = () => {
     setShowCreateCourse(true);
-  }
+  };
 
   useEffect(() => {
     const getCourses = () => {
-      client.get('/api/courses/', {
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        }
-      })
-        .then(res => {
+      client
+        .get('/api/courses/', {
+          headers: {
+            Authorization: `Token ${localStorage.getItem('token')}`,
+          },
+        })
+        .then((res) => {
           setCourses(res.data.results);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
-        })
-    }
-  
+        });
+    };
+
     if (currentUser) {
       getCourses();
     }
   }, [currentUser, client]);
-  
-  return(
+
+  return (
     <>
       {currentUser ? (
         <Container>
           <div className='d-flex justify-content-between align-items-center'>
             <h1>Cursos</h1>
-            <Button 
-              onClick={handleCreateCourseClick} 
-              variant='light'
-              size="sm">
-                Nuevo curso
+            <Button onClick={handleCreateCourseClick} variant='light' size='sm'>
+              Nuevo curso
             </Button>
           </div>
 
           <hr />
           <Row>
             <Col md='auto'>
-                <CourseNavbar
-                  courses={courses}
-                  hasCourses={courses.length > 0} 
-                  />
+              <CourseNavbar
+                courses={courses}
+                onCourseClick={(course) => {
+                  setShowCreateCourse(false);
+                  setSelectedCourse(course);
+                }}
+              />
             </Col>
-            {hasCourses && (
-              <Col>
+            <Col>
+              {showCreateCourse ? (
                 <CreateCourse client={client} />
-              </Col>
-            )}
+              ) : selectedCourse ? (
+                <CourseDetails course={selectedCourse} />
+              ) : null}
+            </Col>
           </Row>
         </Container>
       ) : (

@@ -17,3 +17,4 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
             'url', 'user', 'name', 'description', 'category', 'status',
              'created', 'start_date', 'end_date', 'subjects', 'total_time',
         ]
+        depth = 1
