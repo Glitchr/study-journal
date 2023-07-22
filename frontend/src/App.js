@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-
-import Container from 'react-bootstrap/Container';
 
 import Header from './components/Shared/Header/Header';
 import Login from './components/Login/Login';
 import Logout from './components/Login/Logout';
 import SignUp from './components/SignUp/SignUp';
 import Home from './components/Home/Home';
+import Courses from './components/Courses/Courses';
 
-
-axios.defaults.withCredentials = true;
 
 const client = axios.create({
     baseURL: 'http://127.0.0.1:8000',
@@ -24,6 +21,23 @@ function App() {
   const [currentUser, setCurrentUser] = useState();
   const [errorMessage, setErrorMessage] = useState();
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      client.get('/api/users/', {
+        headers: {
+          Authorization: `Token ${token}`
+        }
+      })
+        .then(res => {
+          setCurrentUser(res.data[0].username);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }, []);
+  
   return (
     <div>
       <Router>
@@ -66,6 +80,15 @@ function App() {
               }
             />
             <Route path="/logout" element={<Logout />} />
+            <Route
+              path='/courses'
+              element={
+                <Courses
+                  client={client}
+                  currentUser={currentUser}
+                />
+              }
+            />
           </Routes>
       </Router>
     </div>
