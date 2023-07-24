@@ -129,13 +129,25 @@ function UpdateCourse({ client, course, onCancel, onUpdate }) {
 }
 
 
-function CourseDetails({ course, onUpdateCourseClick}) {
+function CourseDetails({ client, course, onUpdateCourseClick}) {
+  const [categoryName, setCategoryName] = useState('');
   const STATUS = {
     'pe': 'Pendiente',
     'ep': 'En progreso',
     'co': 'Completado',
     'sa': 'Saltado',
   };
+
+  useEffect(() => {
+    // Fetch the category data from the API
+    client.get(course.category)
+      .then(res => {
+        setCategoryName(res.data.name);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, [client, course.category]);
 
   return (
     <Card>
@@ -167,7 +179,7 @@ function CourseDetails({ course, onUpdateCourseClick}) {
 
           <Col>
             <Card.Title>Categoria</Card.Title>
-            <Card.Text>{course.category.name}</Card.Text>
+            <Card.Text>{categoryName}</Card.Text>
           </Col>
         </Row>
       </Card.Body>
@@ -232,7 +244,7 @@ function CourseNavbar({ courses, onCourseClick }) {
   );
 }
 
-function CreateCourse({ client }) {
+function CreateCourse({ client, onCreate }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('pe');
@@ -269,6 +281,7 @@ function CreateCourse({ client }) {
     })
       .then(res => {
         alert('Curso creado satisfactoriamente!');
+        onCreate(res.data);
       })
       .catch(error => {
         alert('Se ha producido un error al crear el curso. Por favor, inténtelo de nuevo.');
@@ -358,6 +371,12 @@ function Courses({ client, currentUser }) {
     setShowUpdateCourse(false);
   };
   
+  const handleCourseCreated = (newCourse) => {
+    setShowCreateCourse(false);
+    setCourses(courses => [...courses, newCourse]);
+    setSelectedCourse(newCourse);
+  };
+
   const handleCreateCourseClick = () => {
     setShowCreateCourse(true);
   };
@@ -407,7 +426,7 @@ function Courses({ client, currentUser }) {
             </Col>
             <Col>
               {showCreateCourse ? (
-                <CreateCourse client={client} />
+                <CreateCourse client={client} onCreate={handleCourseCreated} />
               ) : showUpdateCourse && selectedCourse ? (
                 <UpdateCourse 
                   client={client}
@@ -416,7 +435,8 @@ function Courses({ client, currentUser }) {
                   onUpdate={handleCourseUpdated}
                 />
               ) : selectedCourse ? (
-                <CourseDetails 
+                <CourseDetails
+                  client={client}
                   course={selectedCourse}
                   onUpdateCourseClick={handleUpdateCourseClick}
                 />
