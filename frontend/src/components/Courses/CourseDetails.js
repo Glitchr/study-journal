@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
+import CreateSubject from '../Subjects/CreateSubject';
 
 
-function CourseDetails({ client, course, onUpdateCourseClick, onDelete }) {
+function CourseDetails({ 
+  client,
+  course,
+  onUpdateCourseClick,
+  onDelete,
+  onAddSubject,
+}) {
     const [categoryName, setCategoryName] = useState('');
     const STATUS = {
       'pe': 'Pendiente',
@@ -10,6 +17,7 @@ function CourseDetails({ client, course, onUpdateCourseClick, onDelete }) {
       'co': 'Completado',
       'sa': 'Saltado',
     };
+    const [showCreateSubject, setShowCreateSubject] = useState(false);
   
     useEffect(() => {
       // Fetch the category data from the API
@@ -59,6 +67,22 @@ function CourseDetails({ client, course, onUpdateCourseClick, onDelete }) {
             </Col>
           </Row>
         </Card.Body>
+        <Card.Footer>
+          <Button className='d-flex justify-content-end' variant='primary' size='sm' onClick={() => setShowCreateSubject(true)}>
+            Agregar asignatura
+          </Button>
+        </Card.Footer>
+        {showCreateSubject && (
+          <CreateSubject
+            client={client}
+            course={course}
+            onCreate={(newSubject) => {
+              setShowCreateSubject(false);
+              onAddSubject(newSubject);
+            }}
+            onCancel={() => setShowCreateSubject(false)}
+          />
+        )}
       </Card>
     );
   }

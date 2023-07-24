@@ -57,6 +57,21 @@ function Courses({ client, currentUser }) {
       });
   };
 
+  const handleSubjectCreated = (newSubject) => {
+    // Update the state to include the new subject in the list of subjects
+    // for the current course
+    setCourses(courses => courses.map(course => {
+      if (course.url === selectedCourse.url) {
+        return {
+          ...course,
+          subjects: [...course.subjects, newSubject],
+        };
+      } else {
+        return course;
+      }
+    }));
+  };
+
   useEffect(() => {
     const getCourses = () => {
       client
@@ -116,6 +131,7 @@ function Courses({ client, currentUser }) {
                   course={selectedCourse}
                   onUpdateCourseClick={handleUpdateCourseClick}
                   onDelete={handleCourseDeleted}
+                  onAddSubject={handleSubjectCreated}
                 />
               ) : null}
             </Col>
