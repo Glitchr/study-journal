@@ -129,7 +129,7 @@ function UpdateCourse({ client, course, onCancel, onUpdate }) {
 }
 
 
-function CourseDetails({ client, course, onUpdateCourseClick}) {
+function CourseDetails({ client, course, onUpdateCourseClick, onDelete }) {
   const [categoryName, setCategoryName] = useState('');
   const STATUS = {
     'pe': 'Pendiente',
@@ -153,7 +153,10 @@ function CourseDetails({ client, course, onUpdateCourseClick}) {
     <Card>
       <Card.Header className='d-flex justify-content-between'>
         {course.name}
-        <Button variant='light' size='sm' onClick={onUpdateCourseClick}>Editar curso</Button>
+        <div>
+          <Button className='me-2' variant='dark' size='sm' onClick={onUpdateCourseClick}>Editar</Button>
+          <Button variant='danger' size='sm' onClick={() => onDelete(course)}>Eliminar</Button>
+        </div>
       </Card.Header>
       <Card.Body>
         <Card.Title>Descripción</Card.Title>
@@ -381,6 +384,23 @@ function Courses({ client, currentUser }) {
     setShowCreateCourse(true);
   };
 
+  const handleCourseDeleted = (deletedCourse) => {
+    // Send a DELETE request to the server to delete the specified course
+    client.delete(deletedCourse.url, {
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      }
+    })
+      .then(res => {
+        // Remove the deleted course from the list of courses
+        setCourses(courses => courses.filter(course => course.url !== deletedCourse.url));
+        setSelectedCourse(null);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     const getCourses = () => {
       client
@@ -439,6 +459,7 @@ function Courses({ client, currentUser }) {
                   client={client}
                   course={selectedCourse}
                   onUpdateCourseClick={handleUpdateCourseClick}
+                  onDelete={handleCourseDeleted}
                 />
               ) : null}
             </Col>
