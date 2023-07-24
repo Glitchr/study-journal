@@ -3,7 +3,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Collapse, Button } from 'react-bootstrap';
 
 
-function CourseNavbar({ courses, onCourseClick }) {
+function CourseNavbar({ courses, onCourseClick, onSubjectClick }) {
     const [openCourses, setOpenCourses] = useState({});
     const [openSubjects, setOpenSubject] = useState({});
   
@@ -38,7 +38,7 @@ function CourseNavbar({ courses, onCourseClick }) {
                 {course.subjects.map((subject) => (
                   <div key={subject.url}>
                     <div className='d-flex justify-content-between'>
-                      <Button variant='link'>{subject.name}</Button>
+                      <Button variant='link' onClick={() => onSubjectClick(subject)}>{subject.name}</Button>
                       <Button variant='link' onClick={() => handleSubjectClick(subject.url)}>
                         {openSubjects[subject.url] ? <FaChevronUp /> : <FaChevronDown />}
                       </Button>

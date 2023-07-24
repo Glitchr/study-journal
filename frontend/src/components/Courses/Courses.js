@@ -8,6 +8,7 @@ import UpdateCourse from './UpdateCourse';
 
 
 import './Courses.css'
+import SubjectDetails from '../Subjects/SubjectDetails';
 
 
 function Courses({ client, currentUser }) {
@@ -15,6 +16,8 @@ function Courses({ client, currentUser }) {
   const [showCreateCourse, setShowCreateCourse] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showUpdateCourse, setShowUpdateCourse] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
 
   const handleCourseUpdated = (updatedCourse) => {
     setShowUpdateCourse(false);
@@ -113,6 +116,10 @@ function Courses({ client, currentUser }) {
                   setShowCreateCourse(false);
                   setSelectedCourse(course);
                 }}
+                onSubjectClick={(subject) => {
+                  setSelectedCourse(null);
+                  setSelectedSubject(subject);
+                }}
               />
             </Col>
             <Col>
@@ -132,6 +139,10 @@ function Courses({ client, currentUser }) {
                   onUpdateCourseClick={handleUpdateCourseClick}
                   onDelete={handleCourseDeleted}
                   onAddSubject={handleSubjectCreated}
+                />
+              ) : selectedSubject ? (
+                <SubjectDetails
+                  subject={selectedSubject}
                 />
               ) : null}
             </Col>

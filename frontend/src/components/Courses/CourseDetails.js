@@ -45,12 +45,12 @@ function CourseDetails({
   
           <Row className='mb-3'>
             <Col>
-              <Card.Title>Start Date</Card.Title>
+              <Card.Title>Fecha de inicio</Card.Title>
               <Card.Text>{course.start_date}</Card.Text>
             </Col>
   
             <Col>
-              <Card.Title>End Date</Card.Title>
+              <Card.Title>Fecha de finalización</Card.Title>
               <Card.Text>{course.end_date}</Card.Text>
             </Col>
           </Row>
