@@ -9,40 +9,39 @@ import UpdateCourse from './UpdateCourse';
 
 import './Courses.css'
 import SubjectDetails from '../Subjects/SubjectDetails';
+import UpdateSubject from '../Subjects/UpdateSubject';
 
 
 function Courses({ client, currentUser }) {
+  const [view, setView] = useState('home');
   const [courses, setCourses] = useState([]);
-  const [showCreateCourse, setShowCreateCourse] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [showUpdateCourse, setShowUpdateCourse] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
-
   const handleCourseUpdated = (updatedCourse) => {
-    setShowUpdateCourse(false);
+    setView('courseDetails');
     setCourses(courses.map(course => course.url === updatedCourse.url ? updatedCourse : course));
     setSelectedCourse(updatedCourse);
   };
-
+  
   const handleUpdateCourseClick = () => {
-    setShowUpdateCourse(true);
+    setView('updateCourse');
   };
-
+  
   const handleCancelUpdateCourse = () => {
-    setShowUpdateCourse(false);
+    setView('courseDetails');
   };
   
   const handleCourseCreated = (newCourse) => {
-    setShowCreateCourse(false);
+    setView('courseDetails');
     setCourses(courses => [...courses, newCourse]);
     setSelectedCourse(newCourse);
   };
-
+  
   const handleCreateCourseClick = () => {
-    setShowCreateCourse(true);
+    setView('createCourse');
   };
-
+  
   const handleCourseDeleted = (deletedCourse) => {
     // Send a DELETE request to the server to delete the specified course
     client.delete(deletedCourse.url, {
@@ -59,7 +58,7 @@ function Courses({ client, currentUser }) {
         console.log(error);
       });
   };
-
+  
   const handleSubjectCreated = (newSubject) => {
     // Update the state to include the new subject in the list of subjects
     // for the current course
@@ -74,6 +73,30 @@ function Courses({ client, currentUser }) {
       }
     }));
   };
+  
+  const handleUpdateSubjectClick = () => {
+    setView('updateSubject');
+  }
+  
+  const handleCancelUpdateSubject = () => {
+    setView('subjectDetails');
+  }
+
+  const handleSubjectUpdated = (updatedSubject) => {
+    setView('subjectDetails');
+    setCourses(courses => courses.map(course => {
+      if (course.url === selectedCourse.url) {
+        return {
+          ...course,
+          subjects: course.subjects.map(
+            subject => subject.url === updatedSubject.url ? updatedSubject : subject),
+        };
+      } else {
+        return course;
+      }
+    }));
+    setSelectedSubject(updatedSubject);
+  }
 
   useEffect(() => {
     const getCourses = () => {
@@ -113,26 +136,26 @@ function Courses({ client, currentUser }) {
               <CourseNavbar
                 courses={courses}
                 onCourseClick={(course) => {
-                  setShowCreateCourse(false);
+                  setView('courseDetails');
                   setSelectedCourse(course);
                 }}
                 onSubjectClick={(subject) => {
-                  setSelectedCourse(null);
+                  setView('subjectDetails');
                   setSelectedSubject(subject);
                 }}
               />
             </Col>
             <Col>
-              {showCreateCourse ? (
+              {view === 'createCourse' ? (
                 <CreateCourse client={client} onCreate={handleCourseCreated} />
-              ) : showUpdateCourse && selectedCourse ? (
+              ) : view === 'updateCourse' && selectedCourse ? (
                 <UpdateCourse 
                   client={client}
                   course={selectedCourse} 
                   onCancel={handleCancelUpdateCourse}
                   onUpdate={handleCourseUpdated}
                 />
-              ) : selectedCourse ? (
+              ) : view === 'courseDetails' && selectedCourse ? (
                 <CourseDetails
                   client={client}
                   course={selectedCourse}
@@ -140,9 +163,18 @@ function Courses({ client, currentUser }) {
                   onDelete={handleCourseDeleted}
                   onAddSubject={handleSubjectCreated}
                 />
-              ) : selectedSubject ? (
+              ) : view === 'subjectDetails' && selectedSubject ? (
                 <SubjectDetails
                   subject={selectedSubject}
+                  onUpdateSubjectClick={handleUpdateSubjectClick}
+                />
+              ) : view === 'updateSubject' && selectedSubject ? (
+                <UpdateSubject 
+                  client={client}
+                  course={courses.find(course => course.subjects.some(subject => subject.url === selectedSubject.url))}
+                  subject={selectedSubject}
+                  onCancel={handleCancelUpdateSubject}
+                  onUpdate={handleSubjectUpdated}
                 />
               ) : null}
             </Col>

@@ -4,6 +4,7 @@ import { Card, Row, Col, Button } from 'react-bootstrap';
 
 function SubjectDetails({
   subject,
+  onUpdateSubjectClick,
 }) {
   const STATUS = {
     'pe': 'Pendiente',
@@ -16,7 +17,9 @@ function SubjectDetails({
       <Card.Header className='d-flex justify-content-between'>
         {subject.name}
         <div>
-          <Button className='me-2' variant='dark' size='sm'>Editar</Button>
+          <Button className='me-2' variant='dark' size='sm' onClick={onUpdateSubjectClick}>
+            Editar
+          </Button>
           <Button variant='danger' size='sm'>Eliminar</Button>
         </div>
       </Card.Header>

@@ -44,6 +44,7 @@ function UpdateCourse({ client, course, onCancel, onUpdate }) {
         })
         .catch(error => {
           alert('Se ha producido un error al actualizar el curso. Por favor, inténtelo de nuevo.');
+          console.log(error);
         });
     }
   
