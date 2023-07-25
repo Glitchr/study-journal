@@ -98,6 +98,32 @@ function Courses({ client, currentUser }) {
     setSelectedSubject(updatedSubject);
   }
 
+  const handleSubjectDeleted = (deletedSubject) => {
+    // Send a DELETE request to the server to delete the specified subject
+    client.delete(deletedSubject.url, {
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      }
+    })
+      .then(res => {
+        // Remove the deleted subject from the list in the navbar
+        setCourses(courses => courses.map(course => {
+          if (course.url === deletedSubject.course) {
+            return {
+              ...course,
+              subjects: course.subjects.filter(subject => subject.url !== deletedSubject.url)
+            };
+          } else {
+            return course;
+          }
+        }));
+        setSelectedSubject(null);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
   useEffect(() => {
     const getCourses = () => {
       client
@@ -167,6 +193,7 @@ function Courses({ client, currentUser }) {
                 <SubjectDetails
                   subject={selectedSubject}
                   onUpdateSubjectClick={handleUpdateSubjectClick}
+                  onDelete={handleSubjectDeleted}
                 />
               ) : view === 'updateSubject' && selectedSubject ? (
                 <UpdateSubject 

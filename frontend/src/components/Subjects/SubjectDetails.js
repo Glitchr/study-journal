@@ -5,6 +5,7 @@ import { Card, Row, Col, Button } from 'react-bootstrap';
 function SubjectDetails({
   subject,
   onUpdateSubjectClick,
+  onDelete
 }) {
   const STATUS = {
     'pe': 'Pendiente',
@@ -20,7 +21,7 @@ function SubjectDetails({
           <Button className='me-2' variant='dark' size='sm' onClick={onUpdateSubjectClick}>
             Editar
           </Button>
-          <Button variant='danger' size='sm'>Eliminar</Button>
+          <Button variant='danger' size='sm' onClick={() => onDelete(subject)}>Eliminar</Button>
         </div>
       </Card.Header>
       <Card.Body>
