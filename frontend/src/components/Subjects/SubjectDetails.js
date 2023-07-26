@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
+import CreateTask from '../Tasks/CreateTask';
 
 
 function SubjectDetails({
+  client,
+  course,
   subject,
   onUpdateSubjectClick,
-  onDelete
+  onDelete,
+  onAddTask,
 }) {
   const STATUS = {
     'pe': 'Pendiente',
@@ -13,6 +17,8 @@ function SubjectDetails({
     'co': 'Completado',
     'sa': 'Saltado',
   };
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  
   return (
     <Card>
       <Card.Header className='d-flex justify-content-between'>
@@ -49,8 +55,21 @@ function SubjectDetails({
         <Card.Text>progressBar</Card.Text>
       </Card.Body>
       <Card.Footer>
-        <Button variant='primary' size='sm'>Añadir tarea</Button>
+        <Button variant='primary' size='sm' onClick={() => setShowCreateTask(true)}>
+          Añadir tarea
+        </Button>
       </Card.Footer>
+      {showCreateTask && (
+        <CreateTask 
+          client={client}
+          subject={subject}
+          onCreate={(newTask) => {
+            setShowCreateTask(false);
+            onAddTask(newTask, course, subject);
+          }}
+          onCancel={() => setShowCreateTask(false)}
+        />
+      )}
     </Card>
   );
 }

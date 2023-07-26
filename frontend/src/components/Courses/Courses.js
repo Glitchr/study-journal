@@ -17,6 +17,7 @@ function Courses({ client, currentUser }) {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const handleCourseUpdated = (updatedCourse) => {
     setView('courseDetails');
@@ -58,15 +59,20 @@ function Courses({ client, currentUser }) {
         console.log(error);
       });
   };
+
+  const findCourse = (courses, selectedSubject) => courses.find(course => 
+    course.subjects.some(subject => subject.url === selectedSubject.url));
+
   
   const handleSubjectCreated = (newSubject) => {
     // Update the state to include the new subject in the list of subjects
     // for the current course
     setCourses(courses => courses.map(course => {
       if (course.url === selectedCourse.url) {
+        course.subjects.push(newSubject);
         return {
           ...course,
-          subjects: [...course.subjects, newSubject],
+          subjects: course.subjects,
         };
       } else {
         return course;
@@ -123,6 +129,32 @@ function Courses({ client, currentUser }) {
         console.log(error);
       })
   }
+
+  const handleTaskCreated = (newTask, course, subject) => {
+    // Update the state to include the new task in the list of tasks
+    // for the current subject and course
+    setCourses(courses => courses.map(c => {
+      if (c.url === course.url) {
+        return {
+          ...c,
+          subjects: c.subjects.map(s => {
+            if (s.url === subject.url) {
+              return {
+                ...s,
+                tasks: [...s.tasks, newTask]
+              };
+            } else {
+              return s;
+            }
+          })
+        };
+      } else {
+        return c;
+      }
+    }));
+    setSelectedTask(newTask);
+  }
+
 
   useEffect(() => {
     const getCourses = () => {
@@ -191,14 +223,17 @@ function Courses({ client, currentUser }) {
                 />
               ) : view === 'subjectDetails' && selectedSubject ? (
                 <SubjectDetails
+                  client={client}
+                  course={findCourse(courses, selectedSubject)}
                   subject={selectedSubject}
                   onUpdateSubjectClick={handleUpdateSubjectClick}
                   onDelete={handleSubjectDeleted}
+                  onAddTask={handleTaskCreated}
                 />
               ) : view === 'updateSubject' && selectedSubject ? (
                 <UpdateSubject 
                   client={client}
-                  course={courses.find(course => course.subjects.some(subject => subject.url === selectedSubject.url))}
+                  course={findCourse(courses, selectedSubject)}
                   subject={selectedSubject}
                   onCancel={handleCancelUpdateSubject}
                   onUpdate={handleSubjectUpdated}

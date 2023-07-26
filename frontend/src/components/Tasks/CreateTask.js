@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 
-function CreateSubject({ client, course, onCreate, onCancel }) {
+function CreateTask({ client, subject, onCreate, onCancel }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
   const [status, setStatus] = useState('pe');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -12,11 +13,12 @@ function CreateSubject({ client, course, onCreate, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Submit the form data to the server
-    client.post('/api/subjects/', {
+    client.post('/api/tasks/', {
       name: name,
       description: description,
       status: status,
-      course: course.url,
+      due_date: dueDate || null,
+      subject: subject.url,
       start_date: startDate || null,
       end_date: endDate || null,
     }, {
@@ -25,11 +27,11 @@ function CreateSubject({ client, course, onCreate, onCancel }) {
       }
     })
       .then(res => {
-        alert('Asignatura creada satisfactoriamente!')
+        alert('Tarea creada satisfactoriamente!')
         onCreate(res.data);
-      }) 
+      })
       .catch(error => {
-        alert('Se ha producido un error al crear la asignatura. Por favor, inténtelo de nuevo.')
+        alert('Se ha producido un error al crear la asignatura. Por favor, inténtelo de nuevo')
         console.log(error);
       });
   }
@@ -43,7 +45,12 @@ function CreateSubject({ client, course, onCreate, onCancel }) {
 
       <Form.Group className='mb-3' controlId='description'>
         <Form.Label>Descripción</Form.Label>
-        <Form.Control as='textarea' value={description} onChange={e => setDescription(e.target.value)} /> 
+        <Form.Control type='textarea' value={description} onChange={e => setDescription(e.target.value)} />
+      </Form.Group>
+
+      <Form.Group className='mb-3' controlId='dueDate'>
+        <Form.Label>Fecha de entrega</Form.Label>
+        <Form.Control type='date' value={dueDate} onChange={e => setDueDate(e.target.value)} />
       </Form.Group>
 
       <Form.Group className='mb-3' controlId='status'>
@@ -85,4 +92,4 @@ function CreateSubject({ client, course, onCreate, onCancel }) {
   );
 }
 
-export default CreateSubject;
+export default CreateTask;
