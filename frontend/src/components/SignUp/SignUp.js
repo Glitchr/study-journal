@@ -49,19 +49,19 @@ function SignUp({
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+  
     const { isValid, errors } = validateSignUpForm(
-      username, 
-      email, 
-      password, 
+      username,
+      email,
+      password,
       passwordConfirmation,
     );
     setFormErrors(errors);
-    
+  
     if (!isValid) {
       return;
     }
-
+  
     client
       .post('/api/users/', {
         username,
@@ -72,27 +72,39 @@ function SignUp({
           bio: '',
           birth_date: null,
         },
-    })
-    .then(res => {
-      setCurrentUser(username);
-      console.log(res.data);
-      navigate('/');
-    })
-    .catch(error => {
-      if (error.response && error.response.status === 400) {
-        if (error.response.data) {
-          // Display the first validation error in Spanish
-          const [firstField, firstErrors] = Object.entries(error.response.data)[0];
-          setErrorMessage(firstErrors[0]);
+      })
+      .then(res => {
+        client
+          .post('/api/auth/token/', {
+            username: username,
+            password: password,
+          })
+          .then(res => {
+            // Store the token in local storage
+            localStorage.setItem('token', res.data.token);
+            setCurrentUser(username);
+            navigate('/');
+          })
+          .catch(error => {
+            // Handle errors when obtaining the token
+            setErrorMessage('Ocurrió un error al iniciar sesión');
+          });
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 400) {
+          if (error.response.data) {
+            // Display the first validation error in Spanish
+            const [firstField, firstErrors] = Object.entries(error.response.data)[0];
+            setErrorMessage(firstErrors[0]);
+          } else {
+            // Display a generic error message in Spanish
+            setErrorMessage('Ocurrió un error al crear el usuario');
+          }
         } else {
-          // Display a generic error message in Spanish
-          setErrorMessage('Ocurrió un error al crear el usuario');
+          // Handle other types of errors
+          setErrorMessage('Ocurrió un error inesperado');
         }
-      } else {
-        // Handle other types of errors
-        setErrorMessage('Ocurrió un error inesperado');
-      }
-    })
+      });
   }
 
   return (

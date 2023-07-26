@@ -50,6 +50,10 @@ function Courses({ client, currentUser }) {
   const handleCreateCourseClick = () => {
     setView('createCourse');
   };
+
+  const handleCancelCreateCourse = () => {
+    setView(null);
+  }
   
   const handleCourseDeleted = (deletedCourse) => {
     // Send a DELETE request to the server to delete the specified course
@@ -262,6 +266,9 @@ function Courses({ client, currentUser }) {
           <hr />
           <Row>
             <Col md='auto'>
+              {courses.length === 0 && (
+                <h4>No tienes cursos todavia. Empieza uno nuevo!</h4>
+              )}
               <CourseNavbar
                 courses={courses}
                 onCourseClick={handleCourseClick}
@@ -271,7 +278,11 @@ function Courses({ client, currentUser }) {
             </Col>
             <Col>
               {view === 'createCourse' ? (
-                <CreateCourse client={client} onCreate={handleCourseCreated} />
+                <CreateCourse 
+                  client={client}
+                  onCreate={handleCourseCreated} 
+                  onCancel={handleCancelCreateCourse}
+                />
               ) : view === 'updateCourse' && selectedCourse ? (
                 <UpdateCourse 
                   client={client}

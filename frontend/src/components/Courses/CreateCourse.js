@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 
-function CreateCourse({ client, onCreate }) {
+function CreateCourse({ client, onCreate, onCancel }) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [status, setStatus] = useState('pe');
@@ -30,8 +30,8 @@ function CreateCourse({ client, onCreate }) {
         description: description,
         status: status,
         category: category,
-        start_date: startDate,
-        end_date: endDate,
+        start_date: startDate || null,
+        end_date: endDate || null,
       }, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`
@@ -43,6 +43,7 @@ function CreateCourse({ client, onCreate }) {
         })
         .catch(error => {
           alert('Se ha producido un error al crear el curso. Por favor, inténtelo de nuevo.');
+          console.log(error);
         });
     }
   
@@ -98,12 +99,20 @@ function CreateCourse({ client, onCreate }) {
             </Form.Group>
           </Col>
         </Row>
-  
-        <div className='d-grid gap-2'>
-          <Button variant="success" type="submit">
-            Crear curso
-          </Button>
-        </div>
+        
+        <Row>
+          <Col className='d-grid gap-2'>
+            <Button variant="success" type="submit">
+              Crear curso
+            </Button>
+          </Col>
+
+          <Col className='d-grid gap-2'>
+              <Button variant="secondary" onClick={onCancel}>
+                Cancelar
+              </Button>
+          </Col>
+        </Row>
       </Form>
     );
   }
