@@ -68,7 +68,7 @@ function CourseDetails({
           </Row>
         </Card.Body>
         <Card.Footer>
-          <Button className='d-flex justify-content-end' variant='primary' size='sm' onClick={() => setShowCreateSubject(true)}>
+          <Button variant='success' size='sm' onClick={() => setShowCreateSubject(true)}>
             Agregar asignatura
           </Button>
         </Card.Footer>

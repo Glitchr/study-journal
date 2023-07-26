@@ -32,9 +32,9 @@ function SubjectDetails({
       </Card.Header>
       <Card.Body>
         <Card.Title>Descripción</Card.Title>
-        <Card.Text>{subject.description}</Card.Text>
+        <Card.Text className='mb-3'>{subject.description}</Card.Text>
 
-        <Row>
+        <Row className='mb-3'>
           <Col>
             <Card.Title>Fecha de inicio</Card.Title>
             <Card.Text>{subject.start_date}</Card.Text>
@@ -55,7 +55,7 @@ function SubjectDetails({
         <Card.Text>progressBar</Card.Text>
       </Card.Body>
       <Card.Footer>
-        <Button variant='primary' size='sm' onClick={() => setShowCreateTask(true)}>
+        <Button variant='success' size='sm' onClick={() => setShowCreateTask(true)}>
           Añadir tarea
         </Button>
       </Card.Footer>

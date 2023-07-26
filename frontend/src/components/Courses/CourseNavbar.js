@@ -3,7 +3,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Collapse, Button } from 'react-bootstrap';
 
 
-function CourseNavbar({ courses, onCourseClick, onSubjectClick }) {
+function CourseNavbar({ courses, onCourseClick, onSubjectClick, onTaskClick }) {
     const [openCourses, setOpenCourses] = useState({});
     const [openSubjects, setOpenSubject] = useState({});
   
@@ -46,7 +46,9 @@ function CourseNavbar({ courses, onCourseClick, onSubjectClick }) {
                     <Collapse in={openSubjects[subject.url]}>
                       <div className='indent'>
                         {subject.tasks.map((task) => (
-                          <Button variant='link' key={task.url}>{task.name}</Button>
+                          <div key={task.url}>
+                            <Button variant='link' onClick={() => onTaskClick(task)}>{task.name}</Button>
+                          </div>  
                         ))}
                       </div>
                     </Collapse>

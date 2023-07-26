@@ -10,6 +10,7 @@ import UpdateCourse from './UpdateCourse';
 import './Courses.css'
 import SubjectDetails from '../Subjects/SubjectDetails';
 import UpdateSubject from '../Subjects/UpdateSubject';
+import TaskDetails from '../Tasks/TaskDetails';
 
 
 function Courses({ client, currentUser }) {
@@ -18,6 +19,11 @@ function Courses({ client, currentUser }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
+
+  const handleCourseClick = (course) => {
+    setView('courseDetails');
+    setSelectedCourse(course);
+  }
 
   const handleCourseUpdated = (updatedCourse) => {
     setView('courseDetails');
@@ -64,6 +70,11 @@ function Courses({ client, currentUser }) {
     course.subjects.some(subject => subject.url === selectedSubject.url));
 
   
+  const handleSubjectClick = (subject) => {
+    setView('subjectDetails');
+    setSelectedSubject(subject);
+  }
+
   const handleSubjectCreated = (newSubject) => {
     // Update the state to include the new subject in the list of subjects
     // for the current course
@@ -129,7 +140,13 @@ function Courses({ client, currentUser }) {
         console.log(error);
       })
   }
+  
 
+  const handleTaskClick = (task) => {
+    setView('taskDetails'); 
+    setSelectedTask(task);
+  }
+  
   const handleTaskCreated = (newTask, course, subject) => {
     // Update the state to include the new task in the list of tasks
     // for the current subject and course
@@ -193,14 +210,9 @@ function Courses({ client, currentUser }) {
             <Col md='auto'>
               <CourseNavbar
                 courses={courses}
-                onCourseClick={(course) => {
-                  setView('courseDetails');
-                  setSelectedCourse(course);
-                }}
-                onSubjectClick={(subject) => {
-                  setView('subjectDetails');
-                  setSelectedSubject(subject);
-                }}
+                onCourseClick={handleCourseClick}
+                onSubjectClick={handleSubjectClick}
+                onTaskClick={handleTaskClick}
               />
             </Col>
             <Col>
@@ -237,6 +249,11 @@ function Courses({ client, currentUser }) {
                   subject={selectedSubject}
                   onCancel={handleCancelUpdateSubject}
                   onUpdate={handleSubjectUpdated}
+                />
+              ) : view === 'taskDetails' && selectedTask ? (
+                <TaskDetails 
+                  client={client}
+                  task={selectedTask}
                 />
               ) : null}
             </Col>
