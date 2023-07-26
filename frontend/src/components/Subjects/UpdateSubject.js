@@ -11,7 +11,7 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!subject) {
+    if (!course) {
       console.log('Error: subject prop is null');
       return;
     }
@@ -21,8 +21,8 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
       description: description,
       status: status,
       course: course.url,
-      start_date: startDate,
-      end_date: endDate,
+      start_date: startDate || null,
+      end_date: endDate || null,
     }, {
       headers: {
         'Authorization': `Token ${localStorage.getItem('token')}`
@@ -47,26 +47,26 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
 
       <Form.Group className='mb-3' controlId='description'>
         <Form.Label>Descripción</Form.Label>
-        <Form.Control as='textarea' value={description} onChange={e => setDescription(e.target.value)} />
+        <Form.Control type='textarea' value={description} onChange={e => setDescription(e.target.value)} />
       </Form.Group>
 
-      <Row className='mb-3'>
+      <Row>
         <Col>
-          <Form.Group controlId='startDate'>
+          <Form.Group className='mb-3' controlId='startDate'>
             <Form.Label>Fecha de inicio</Form.Label>
             <Form.Control type='date' value={startDate} onChange={e => setStartDate(e.target.value)} />
           </Form.Group>
         </Col>
 
         <Col>
-          <Form.Group controlId='endDate'>
+          <Form.Group className='mb-3' controlId='endDate'>
             <Form.Label>Fecha de finalización</Form.Label>
             <Form.Control type='date' value={endDate} onChange={e => setEndDate(e.target.value)} />
           </Form.Group>
         </Col>
 
         <Col>
-          <Form.Group controlId='status'>
+          <Form.Group className='mb-3' controlId='status'>
             <Form.Label>Estado</Form.Label>
             <Form.Select value={status} onChange={e => setStatus(e.target.value)}>
               <option value='pe'>Pendiente</option>
@@ -79,11 +79,11 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
       </Row>
 
       <Row>
-        <Col className='d-grid gap-2'>
+        <Col className='d-grip gap-2'>
           <Button variant='success' type='submit'>Actualizar asignatura</Button>
         </Col>
 
-        <Col className='d-grid gap-2'>
+        <Col className='d-grip gap-2'>
           <Button variant='secondary' onClick={onCancel}>Cancelar</Button>
         </Col>
       </Row>

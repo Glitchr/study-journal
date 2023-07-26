@@ -108,16 +108,11 @@ function Courses({ client, currentUser }) {
   const handleSubjectUpdated = (updatedSubject) => {
     setView('subjectDetails');
     setCourses(courses => courses.map(course => {
-      if (course.url === selectedCourse.url) {
         return {
           ...course,
           subjects: course.subjects.map(
             subject => subject.url === updatedSubject.url ? updatedSubject : subject),
-        };
-      } else {
-        return course;
-      }
-    }));
+    }}));
     setSelectedSubject(updatedSubject);
   }
 
@@ -195,15 +190,11 @@ function Courses({ client, currentUser }) {
       return {
         ...course,
         subjects: course.subjects.map(subject => {
-          if (subject.url === updatedTask.subject) {
             return {
               ...subject,
               tasks: subject.tasks.map(task => task.url === updatedTask.url ? 
                 updatedTask : task),
             };
-          } else {
-            return subject;
-          }
         })
       };
     }));
