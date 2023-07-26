@@ -31,8 +31,10 @@ function SubjectDetails({
         </div>
       </Card.Header>
       <Card.Body>
-        <Card.Title>Descripción</Card.Title>
-        <Card.Text className='mb-3'>{subject.description}</Card.Text>
+        <Row className='mb-3'>
+          <Card.Title>Descripción</Card.Title>
+          <Card.Text>{subject.description}</Card.Text>
+        </Row>
 
         <Row className='mb-3'>
           <Col>
@@ -45,14 +47,20 @@ function SubjectDetails({
             <Card.Text>{subject.end_date}</Card.Text>
           </Col>
 
+
+        </Row>
+
+        <Row className='mb-3'>
           <Col>
             <Card.Title>Estado</Card.Title>
             <Card.Text>{STATUS[subject.status]}</Card.Text>
           </Col>
-        </Row>
 
-        <Card.Title>Progreso</Card.Title>
-        <Card.Text>progressBar</Card.Text>
+          <Col>
+            <Card.Title>Progreso</Card.Title>
+            <Card.Text>progressBar</Card.Text>
+          </Col>
+        </Row>
       </Card.Body>
       <Card.Footer>
         <Button variant='success' size='sm' onClick={() => setShowCreateTask(true)}>

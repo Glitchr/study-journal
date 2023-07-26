@@ -45,7 +45,7 @@ function CreateTask({ client, subject, onCreate, onCancel }) {
 
       <Form.Group className='mb-3' controlId='description'>
         <Form.Label>Descripción</Form.Label>
-        <Form.Control type='textarea' value={description} onChange={e => setDescription(e.target.value)} />
+        <Form.Control as='textarea' value={description} onChange={e => setDescription(e.target.value)} />
       </Form.Group>
 
       <Form.Group className='mb-3' controlId='dueDate'>

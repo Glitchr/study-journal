@@ -11,11 +11,13 @@ import './Courses.css'
 import SubjectDetails from '../Subjects/SubjectDetails';
 import UpdateSubject from '../Subjects/UpdateSubject';
 import TaskDetails from '../Tasks/TaskDetails';
+import UpdateTask from '../Tasks/UpdateTask';
 
 
 function Courses({ client, currentUser }) {
   const [view, setView] = useState('home');
   const [courses, setCourses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -140,7 +142,10 @@ function Courses({ client, currentUser }) {
         console.log(error);
       })
   }
-  
+
+  const findSubject = (subjects, selectedTask) => subjects.find(subject => 
+    subject.tasks.some(task => task.url === selectedTask.url));
+
 
   const handleTaskClick = (task) => {
     setView('taskDetails'); 
@@ -172,6 +177,35 @@ function Courses({ client, currentUser }) {
     setSelectedTask(newTask);
   }
 
+  const handleCancelUpdateTask = () => {
+    setView('taskDetails');
+  }
+
+  const handleUpdateTaskClick = () => {
+    setView('updateTask');
+  }
+
+  const handleTaskUpdated = (updatedTask) => {
+    setView('taskDetails');
+    setCourses(courses => courses.map(course => {
+      return {
+        ...course,
+        subjects: course.subjects.map(subject => {
+          if (subject.url === updatedTask.subject) {
+            return {
+              ...subject,
+              tasks: subject.tasks.map(task => task.url === updatedTask.url ? 
+                updatedTask : task),
+            };
+          } else {
+            return subject;
+          }
+        })
+      };
+    }));
+    setSelectedTask(updatedTask);
+  }
+
 
   useEffect(() => {
     const getCourses = () => {
@@ -193,6 +227,26 @@ function Courses({ client, currentUser }) {
       getCourses();
     }
   }, [currentUser, client]);
+
+  useEffect(() => {
+    const getSubjects = () => {
+      client.get('/api/subjects/', {
+        headers: {
+          Authorization: `Token ${localStorage.getItem('token')}`
+        },
+      })
+        .then(res => {
+          setSubjects(res.data.results);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
+
+    if (currentUser) {
+      getSubjects();
+    }
+  }, [currentUser, client])
 
   return (
     <>
@@ -254,6 +308,15 @@ function Courses({ client, currentUser }) {
                 <TaskDetails 
                   client={client}
                   task={selectedTask}
+                  onUpdateTaskClick={handleUpdateTaskClick}
+                />
+              ) : view === 'updateTask' && selectedTask ? (
+                <UpdateTask 
+                  client={client}
+                  subject={findSubject(subjects, selectedTask)}
+                  task={selectedTask}
+                  onCancel={handleCancelUpdateTask}
+                  onUpdate={handleTaskUpdated}
                 />
               ) : null}
             </Col>

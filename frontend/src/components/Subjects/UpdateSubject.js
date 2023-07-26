@@ -47,26 +47,26 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
 
       <Form.Group className='mb-3' controlId='description'>
         <Form.Label>Descripción</Form.Label>
-        <Form.Control type='textarea' value={description} onChange={e => setDescription(e.target.value)} />
+        <Form.Control as='textarea' value={description} onChange={e => setDescription(e.target.value)} />
       </Form.Group>
 
-      <Row>
+      <Row className='mb-3'>
         <Col>
-          <Form.Group className='mb-3' controlId='startDate'>
+          <Form.Group controlId='startDate'>
             <Form.Label>Fecha de inicio</Form.Label>
             <Form.Control type='date' value={startDate} onChange={e => setStartDate(e.target.value)} />
           </Form.Group>
         </Col>
 
         <Col>
-          <Form.Group className='mb-3' controlId='endDate'>
+          <Form.Group controlId='endDate'>
             <Form.Label>Fecha de finalización</Form.Label>
             <Form.Control type='date' value={endDate} onChange={e => setEndDate(e.target.value)} />
           </Form.Group>
         </Col>
 
         <Col>
-          <Form.Group className='mb-3' controlId='status'>
+          <Form.Group controlId='status'>
             <Form.Label>Estado</Form.Label>
             <Form.Select value={status} onChange={e => setStatus(e.target.value)}>
               <option value='pe'>Pendiente</option>
@@ -79,11 +79,11 @@ function UpdateSubject({ client, course, subject, onCancel, onUpdate }) {
       </Row>
 
       <Row>
-        <Col className='d-grip gap-2'>
+        <Col className='d-grid gap-2'>
           <Button variant='success' type='submit'>Actualizar asignatura</Button>
         </Col>
 
-        <Col className='d-grip gap-2'>
+        <Col className='d-grid gap-2'>
           <Button variant='secondary' onClick={onCancel}>Cancelar</Button>
         </Col>
       </Row>

@@ -3,7 +3,9 @@ import { Card, Row, Col, Button } from 'react-bootstrap';
 
 
 function TaskDetails({
+  client,
   task,
+  onUpdateTaskClick,
 }) {
   const STATUS = {
     'pe': 'Pendiente',
@@ -18,7 +20,7 @@ function TaskDetails({
       <Card.Header className='d-flex justify-content-between'>
         {task.name}
         <div>
-          <Button className='me-2' variant='dark' size='sm'>
+          <Button className='me-2' variant='dark' size='sm' onClick={onUpdateTaskClick}>
             Editar
           </Button>
           <Button variant='danger' size='sm'>
@@ -27,8 +29,10 @@ function TaskDetails({
         </div>
       </Card.Header>
       <Card.Body>
-        <Card.Title>Notas</Card.Title>
-        <Card.Text>{task.description}</Card.Text>
+        <Row className='mb-3'>
+          <Card.Title>Notas</Card.Title>
+          <Card.Text>{task.description}</Card.Text>
+        </Row>
 
         <Row className='mb-3'>
           <Col>

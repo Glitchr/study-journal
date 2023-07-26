@@ -40,9 +40,11 @@ function CourseDetails({
           </div>
         </Card.Header>
         <Card.Body>
-          <Card.Title>Descripción</Card.Title>
-          <Card.Text>{course.description}</Card.Text>
-  
+          <Row className='mb-3'>
+            <Card.Title>Descripción</Card.Title>
+            <Card.Text>{course.description}</Card.Text>
+          </Row>
+          
           <Row className='mb-3'>
             <Col>
               <Card.Title>Fecha de inicio</Card.Title>
