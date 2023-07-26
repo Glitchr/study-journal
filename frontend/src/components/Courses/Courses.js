@@ -210,6 +210,38 @@ function Courses({ client, currentUser }) {
     setSelectedTask(updatedTask);
   }
 
+  const handleTaskDeleted = (deletedTask) => {
+    // Send a DELETE request to the server to delete the specified task
+    console.log(deletedTask.url);
+    client.delete(deletedTask.url, {
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      }
+    })
+      .then(res => {
+        // Remove the deleted task from the list of tasks
+        setCourses(courses => courses.map(course => {
+          return {
+            ...course,
+            subjects: course.subjects.map(subject => {
+              if (subject.url === deletedTask.subject) {
+                return {
+                  ...subject,
+                  tasks: subject.tasks.filter(task => task.url !== deletedTask.url)
+                };
+              } else {
+                return subject;
+              }
+            })
+          };
+        }));
+        setSelectedTask(null);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
 
   useEffect(() => {
     const getCourses = () => {
@@ -320,6 +352,7 @@ function Courses({ client, currentUser }) {
                   client={client}
                   task={selectedTask}
                   onUpdateTaskClick={handleUpdateTaskClick}
+                  onDelete={handleTaskDeleted}
                 />
               ) : view === 'updateTask' && selectedTask ? (
                 <UpdateTask 

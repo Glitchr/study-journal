@@ -6,6 +6,7 @@ function TaskDetails({
   client,
   task,
   onUpdateTaskClick,
+  onDelete,
 }) {
   const STATUS = {
     'pe': 'Pendiente',
@@ -23,7 +24,7 @@ function TaskDetails({
           <Button className='me-2' variant='dark' size='sm' onClick={onUpdateTaskClick}>
             Editar
           </Button>
-          <Button variant='danger' size='sm'>
+          <Button variant='danger' size='sm' onClick={() => onDelete(task)}>
             Eliminar
           </Button>
         </div>
