@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Pomodoro
+from .models import Timer
 
 
-admin.site.register(Pomodoro)
+admin.site.register(Timer)

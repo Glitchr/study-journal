@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
+
+import Timer from '../Timer/Timer';
+import { secondsToHms } from '../../utils';
 
 
 function TaskDetails({
@@ -14,10 +17,44 @@ function TaskDetails({
     'co': 'Completado',
     'sa': 'Saltado',    
   }
-  const [showCreateTimer, setShowCreateTimer] = useState(false);
+  const [showTimer, setShowTimer] = useState(false);
+  const [taskData, setTaskData] = useState(task);
 
+  const handleTimerStop = async () => {
+    try {
+      const response = await client.get(task.url, {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        }
+      });
+      setTaskData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleTimerClick = () => {
+    !showTimer ? setShowTimer(true) : setShowTimer(false);
+  }
+
+  useEffect(() => {
+    const fetchTaskData = async () => {
+      try {
+        const response = await client.get(task.url, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        });
+        setTaskData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchTaskData();
+  }, [client, task]);
+  
   return (
-    <Card>
+    <Card className='mb-3'>
       <Card.Header className='d-flex justify-content-between'>
         {task.name}
         <div>
@@ -29,50 +66,63 @@ function TaskDetails({
           </Button>
         </div>
       </Card.Header>
-      <Card.Body>
-        <Row className='mb-3'>
-          <Card.Title>Notas</Card.Title>
-          <Card.Text>{task.description}</Card.Text>
-        </Row>
+      <Row>
+        <Col>
+          <Card.Body>
+          <Row className='mb-3'>
+            <Card.Title>Notas</Card.Title>
+            <Card.Text>{taskData.description}</Card.Text>
+          </Row>
 
-        <Row className='mb-3'>
-          <Col>
-            <Card.Title>Fecha de entrega</Card.Title>
-            <Card.Text>{task.due_date}</Card.Text>
-          </Col>
+          <Row className='mb-3'>
+            <Col>
+              <Card.Title>Fecha de entrega</Card.Title>
+              <Card.Text>{taskData.due_date}</Card.Text>
+            </Col>
 
-          <Col>
-            <Card.Title>Estado</Card.Title>
-            <Card.Text>{STATUS[task.status]}</Card.Text>
-          </Col>
-        </Row>
+            <Col>
+              <Card.Title>Estado</Card.Title>
+              <Card.Text>{STATUS[taskData.status]}</Card.Text>
+            </Col>
+          </Row>
 
-        <Row className='mb-3'>
-          <Col>
-            <Card.Title>Progreso</Card.Title>
-            <Card.Text>progressBar</Card.Text>
-          </Col>
+          <Row className='mb-3'>
+            <Col>
+              <Card.Title>Progreso</Card.Title>
+              <Card.Text>progressBar</Card.Text>
+            </Col>
 
-          <Col>
-            <Card.Title>Tiempo</Card.Title>
-            <Card.Text>timerDuration</Card.Text>
-          </Col>
-        </Row> 
+            <Col>
+              <Card.Title>Tiempo</Card.Title>
+              <Card.Text>{secondsToHms(taskData.total_time)}</Card.Text>
+            </Col>
+          </Row> 
 
-        <Row className='mb-3'>
-          <Col>
-            <Card.Title>Fecha de Inicio</Card.Title>
-            <Card.Text>{task.start_date}</Card.Text>
-          </Col>
+          <Row className='mb-3'>
+            <Col>
+              <Card.Title>Fecha de Inicio</Card.Title>
+              <Card.Text>{taskData.start_date}</Card.Text>
+            </Col>
 
+            <Col>
+              <Card.Title>Fecha de finalización</Card.Title>
+              <Card.Text>{taskData.end_date}</Card.Text>
+            </Col>
+          </Row>
+        </Card.Body>
+        </Col>
+        {showTimer && (
           <Col>
-            <Card.Title>Fecha de finalización</Card.Title>
-            <Card.Text>{task.end_date}</Card.Text>
+              <Timer 
+                client={client}
+                task={task}
+                onStop={handleTimerStop}
+              />
           </Col>
-        </Row>
-      </Card.Body>
+        )}
+      </Row>
       <Card.Footer>
-        <Button variant='success' size='sm'>
+        <Button variant='success' size='sm' onClick={handleTimerClick}>
           Temporizador
         </Button>
       </Card.Footer>

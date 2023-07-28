@@ -1,65 +1,38 @@
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from .models import Pomodoro
+from .models import Timer
 
 
-class PomodoroSerializer(serializers.ModelSerializer):
+class TimerSerializer(serializers.HyperlinkedModelSerializer):
     """
     Un serializador que provee el formato de entrada y salida del temporizador.
     """
     user = serializers.HiddenField(default=CurrentUserDefault())
-    remaining_time = serializers.SerializerMethodField()
-    task = serializers.ReadOnlyField(source='task.id')
-    start = serializers.SerializerMethodField()
-    stop = serializers.SerializerMethodField()
-    pause = serializers.SerializerMethodField()
-    resume = serializers.SerializerMethodField()
-    start_break = serializers.SerializerMethodField()
-    stop_break = serializers.SerializerMethodField()
-    resume_break = serializers.SerializerMethodField()
-
+    
     class Meta:
-        model = Pomodoro
+        model = Timer
         fields = [
-            'user', 'start_time', 'end_time', 'duration', 'break_duration', 
-            'on_break', 'remaining_time', 'task', 'start', 'stop', 'pause',
-            'resume', 'start_break', 'stop_break', 'resume_break',
+            'url','user', 'task', 'start_time', 'end_time', 'duration',
+            'is_running', 'is_completed'
         ]
         read_only_fields = [
-            'start_time', 'end_time', 'duration', 'break_duration', 
-            'on_break', 'remaining_time', 'task', 'start', 'stop', 'pause',
-            'resume', 'start_break', 'stop_break', 'resume_break',
+            'start_time', 'end_time',
         ]
 
-    def get_remaining_time(self, obj):
-        """Retorna el tiempo faltante en segundos."""
-        return obj.get_remaining_time()
-
-    def get_start(self, obj):
-        """Comienza el temporizador."""
-        return obj.start()
-
-    def get_stop(self, obj):
-        """Para el temporizador."""
-        return obj.stop()
-
-    def get_pause(self, obj):
-        """Pausa el temporizador."""
-        return obj.pause()
-
-    def get_resume(self, obj):
-        """Resume el temporizador."""
-        return obj.resume()
-
-    def get_start_break(self, obj):
-        """Comienza el descanso."""
-        return obj.start_break()
-
-    def get_stop_break(self, obj):
-        """Para el descanso y comienza la proxima sesion."""
-        return obj.stop_break()
-
-    def get_resume_break(self, obj):
-        """Resume el descanso."""
-        return obj.resume_break()
+    def create(self, validated_data):
+        validated_data['start_time'] = timezone.now()
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        if 'is_running' in validated_data:
+            if validated_data['is_running']:
+                validated_data['start_time'] = timezone.now()
+            else:
+                validated_data['end_time'] = timezone.now()
+                instance.total_time += validated_data['end_time'] - instance.start_time
+        if validated_data.get('is_completed'):
+            validated_data['end_time'] = timezone.now()
+            instance.total_time += validated_data['end_time'] - instance.start_time
+        return super().update(instance, validated_data)

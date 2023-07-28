@@ -1,7 +1,6 @@
 from django.db import models
 
 from subjects.models import Subject
-from timer.models import Pomodoro
 
 
 STATUS = (
@@ -23,7 +22,6 @@ class Task(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     due_date = models.DateField(blank=True, null=True)
-    timer = models.OneToOneField(Pomodoro, related_name='task', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         ordering = ['created']
@@ -33,7 +31,3 @@ class Task(models.Model):
     def __str__(self):
         """Retorna el nombre de la tarea."""
         return self.name
-    
-    def get_total_time(self):
-        """Retorna el tiempo total gastado en la tarea."""
-        return self.timer.duration

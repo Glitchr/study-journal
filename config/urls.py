@@ -25,7 +25,7 @@ from categories.views import CategoryViewSet
 from courses.views import CourseViewSet
 from subjects.views import SubjectViewSet
 from tasks.views import TaskViewSet
-from timer.views import PomodoroViewSet
+from timer.views import TimerViewSet
 
 router = routers.DefaultRouter()
 # Accounts app
@@ -42,7 +42,7 @@ router.register(r'subjects', SubjectViewSet)
 # Tasks app
 router.register(r'tasks', TaskViewSet)
 # Timer app
-router.register(r'timer', PomodoroViewSet)
+router.register(r'timer', TimerViewSet)
 
 
 # Connectamos nuestra API utilizando el enrutamiento automático de URL.

@@ -1,79 +1,33 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.db.models import Sum, F
+
+from tasks.models import Task
 
 
-class Pomodoro(models.Model):
-    """Un modelo que representa un temporizador pomodoro."""
+class Timer(models.Model):
+    """Un modelo que representa un temporizador pomodoro."""    
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True, null=True)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    duration = models.DurationField()
-    break_duration = models.DurationField(default=timedelta(minutes=5), validators=[MinValueValidator(timedelta(seconds=1))])
-    on_break = models.BooleanField(default=False)
+    end_time = models.DateTimeField(null=True, blank=True)
+    duration = models.IntegerField()
+    is_running = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
+    task = models.ForeignKey(Task, related_name='task', on_delete=models.CASCADE, null=True, blank=True) 
+    total_time = models.DurationField(default=timedelta())
 
-    def __str__(self):
-        """Retorna el string del modelo."""
-        return f"Pomodoro {self.id}"
-    
-    def start(self):
-        """Comienza el temporizador."""
-        self.start_time = datetime.now()
-        self.end_time = self.start_time + self.duration
-        self.on_break = False
-        self.save()
-    
-    def stop(self):
-        """Para el temporizador."""
-        self.end_time = datetime.now()
-        self.duration -= (self.end_time - self.start_time)
-        self.on_break = False
-        self.save()
+    class Meta:
+        ordering = ['created']
 
-    def pause(self):
-        """Pausa el temporizador."""
-        self.end_time = datetime.now()
-        self.duration -= (self.end_time - self.start_time)
-        self.on_break = False
-        self.save()
-    
-    def resume(self):
-        """Resume el temporizador."""
-        self.start_time = datetime.now()
-        self.end_time = self.start_time + self.duration
-        self.on_break = False
-        self.save()
-
-    def start_break(self):
-        """Comienza el descanso."""
-        if not self.on_break:
-            self.start_time = datetime.now()
-            self.end_time = self.start_time + self.break_duration
-            self.on_break = True
-            self.save()
-
-    def stop_break(self):
-        """Para el descanso y comienza la proxima sesion."""
-        if self.on_break:
-            self.end_time = datetime.now()
-            self.break_duration -= (self.end_time - self.start_time)
-            if self.break_duration <= timedelta(seconds=0):
-                # Termino el descanso, empieza la proxima sesion.
-                self.start()
-            else:
-                # Aun no termina el descanso, se pausa.
-                self.on_break = False
-                self.save()
-
-    def resume_break(self):
-        """Resume el descanso."""
-        if not self.on_break:
-            self.start_time = datetime.now()
-            self.end_time = self.start_time + self.break_duration
-            self.on_break = True
-            self.save()
-    
-    def get_remaining_time(self):
-        """Retorna el tiempo faltante en segundos."""
-        return max(0, (self.end_time - datetime.now()).total_seconds())
+    @classmethod
+    def total_time_spent(cls, user):
+        """
+        Calcula el tiempo total gastado en todos los temporizadores
+        completados para el usuario especificado.
+        """
+        total_time = cls.objects.filter(user=user, is_completed=True).annotate(
+            time_spent=F('end_time') - F('start_time')
+        ).aggregate(Sum('time_spent'))['time_spent__sum']
+        return total_time.total_seconds() if total_time else 0
