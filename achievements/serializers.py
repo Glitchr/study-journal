@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Achievement, UserAchievement
+from .models import Achievement, Award
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -8,13 +8,13 @@ class AchievementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Achievement
-        fields = ['name', 'description', 'badge', 'bonus', 'level']
+        fields = ['id', 'name', 'description', 'badge', 'level', 'criteria']
 
 
-class UserAchievementSerializer(serializers.HyperlinkedModelSerializer):
+class AwardSerializer(serializers.HyperlinkedModelSerializer):
     """Un serializador que muestra los logros."""
     achievements = AchievementSerializer(many=True, read_only=True)
 
     class Meta:
-        model = UserAchievement
+        model = Award
         fields = ['url', 'user', 'date_achieved', 'achievements']

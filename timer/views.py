@@ -17,4 +17,3 @@ class TimerViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retorna el queryset filtrado por el usuario actual."""
         return self.queryset.filter(user=self.request.user)
-

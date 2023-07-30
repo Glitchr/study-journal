@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Button, Form, Stack } from 'react-bootstrap';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Form } from 'react-bootstrap';
 
 import TimerCircle from './TimerCircle';
 
@@ -13,48 +13,12 @@ const Timer = ({ client, task, onStop }) => {
   const [isBreak, setIsBreak] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [savedDuration, setSavedDuration] = useState(null);
-  const audioStartBreak = new Audio(process.env.PUBLIC_URL + 'Singing bowl startBreak.mp3');
-  const audioStopBreak = new Audio(process.env.PUBLIC_URL + 'Singing bowl stopBreak.mp3');
+  const audioStartBreak = useMemo(() => new Audio(process.env.PUBLIC_URL + 'Singing bowl startBreak.mp3'), []);
+  const audioStopBreak = useMemo(() => new Audio(process.env.PUBLIC_URL + 'Singing bowl stopBreak.mp3'), []);
 
   const percentage = !isPaused
   ? (duration / (isBreak ? breakDuration : workDuration)) * 100
   : (savedDuration / (isBreak ? breakDuration : workDuration)) * 100;
-
-
-  useEffect(() => {
-    if (isRunning) {
-      const intervalId = setInterval(() => {
-        setDuration(duration => {
-          if (duration === 0) {
-            setIsBreak(!isBreak);
-            if (isBreak) {
-              handleStartBreak();
-            } else {
-              handleStopBreak();
-            }
-            return isBreak ? workDuration : breakDuration;
-          } else {
-            return duration - 1;
-          }
-        });
-      }, 1000);
-      return () => clearInterval(intervalId);
-    }
-  }, [isRunning, isBreak, workDuration, breakDuration]);
-
-
-  useEffect(() => {
-    if (!isRunning) {
-      if (isBreak && duration === 0) {
-        // The timer was stopped while on a break
-        setIsBreak(false);
-        setDuration(workDuration);
-      } else {
-        setDuration(isBreak ? breakDuration : workDuration);
-      }
-    }
-  }, [isBreak, isRunning, workDuration, breakDuration]);
-
 
   const handleStart = async () => {
     // Create and start the timer
@@ -135,7 +99,7 @@ const Timer = ({ client, task, onStop }) => {
     }
   };
 
-  const handleStartBreak = async () => {
+  const handleStartBreak = useCallback(async () => {
     try {
       await client.patch(timer.url, {
         is_running: false
@@ -148,9 +112,9 @@ const Timer = ({ client, task, onStop }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [client, timer.url, audioStartBreak]);
 
-  const handleStopBreak = async () => {
+  const handleStopBreak = useCallback(async () => {
     try {
       await client.patch(timer.url, {
         is_running: true
@@ -163,7 +127,42 @@ const Timer = ({ client, task, onStop }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [client, timer.url, audioStopBreak]);
+
+
+  useEffect(() => {
+    if (isRunning) {
+      const intervalId = setInterval(() => {
+        setDuration(duration => {
+          if (duration === 0) {
+            setIsBreak(!isBreak);
+            if (isBreak) {
+              handleStartBreak();
+            } else {
+              handleStopBreak();
+            }
+            return isBreak ? workDuration : breakDuration;
+          } else {
+            return duration - 1;
+          }
+        });
+      }, 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [isRunning, isBreak, workDuration, breakDuration, handleStartBreak, handleStopBreak]);
+
+
+  useEffect(() => {
+    if (!isRunning) {
+      if (isBreak && duration === 0) {
+        // The timer was stopped while on a break
+        setIsBreak(false);
+        setDuration(workDuration);
+      } else {
+        setDuration(isBreak ? breakDuration : workDuration);
+      }
+    }
+  }, [isBreak, isRunning, workDuration, breakDuration, duration]);
 
   return (
     <div>

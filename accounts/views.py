@@ -45,13 +45,11 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Maneja las solicitudes GET al endpoint api/users.
 
-        Si el usuario que hace la solicitud está autenticado y es miembro del personal,
-        devuelve la lista de todos los usuarios. De lo contrario, devuelve un error de
+        Si el usuario que hace la solicitud está autenticado devuelve la 
+        información del usuario. De lo contrario, devuelve un error de
         "Permiso denegado".
         """
-        if request.user.is_authenticated and request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        elif request.user.is_authenticated:
+        if request.user.is_authenticated:
             queryset = self.filter_queryset(self.get_queryset().filter(id=request.user.id))
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
@@ -64,4 +62,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAdminUser]
-

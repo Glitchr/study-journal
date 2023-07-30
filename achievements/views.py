@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 
-from .serializers import AchievementSerializer, UserAchievementSerializer
-from .models import Achievement, UserAchievement
+from .serializers import AchievementSerializer, AwardSerializer
+from .models import Achievement, Award
 
 
 class AchievementViewSet(viewsets.ModelViewSet):
@@ -13,8 +13,8 @@ class AchievementViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 
-class UserAchievementViewSet(viewsets.ModelViewSet):
-    """API endpont que permite ver los logros."""
-    queryset = UserAchievement.objects.all()
-    serializer_class = UserAchievementSerializer
+class AwardViewSet(viewsets.ModelViewSet):
+    """API endpont que permite ver los premios."""
+    queryset = Award.objects.all()
+    serializer_class = AwardSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

@@ -259,7 +259,7 @@ function Courses({ client, currentUser }) {
     const getSubjects = () => {
       client.get('/api/subjects/', {
         headers: {
-          Authorization: `Token ${localStorage.getItem('token')}`
+          'Authorization': `Token ${localStorage.getItem('token')}`
         },
       })
         .then(res => {

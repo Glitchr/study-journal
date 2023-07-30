@@ -11,12 +11,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Retorna el queryset filtrado por el usuario actual, a menos de
-        que el usuario sea admin.
-        """
+        """Retorna el queryset filtrado por el usuario actual."""
         user = self.request.user
-        if user.is_staff:
-            return self.queryset.select_related('subject__course')
-        else:
-            return self.queryset.filter(user=user).select_related('subject__course')
+
+        return self.queryset.filter(user=user).select_related('subject__course')
