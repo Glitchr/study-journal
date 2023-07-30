@@ -18,6 +18,12 @@ function UpdateTask({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!subject) {
+      console.error('Subject is undefined');
+      return;
+    }
+    
     client.put(task.url, {
       name: name,
       description: description,

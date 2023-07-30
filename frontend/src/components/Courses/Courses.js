@@ -18,6 +18,7 @@ function Courses({ client, currentUser }) {
   const [view, setView] = useState('home');
   const [courses, setCourses] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -142,9 +143,19 @@ function Courses({ client, currentUser }) {
       })
   }
 
-  const findSubject = (subjects, selectedTask) => subjects.find(subject => 
-    subject.tasks.some(task => task.url === selectedTask.url));
-
+  const findSubject = (courses, selectedTask) => {
+    let subject;
+    courses.some(course => {
+      subject = course.subjects.find(subject => 
+        subject.tasks.some(task => task.url === selectedTask.url));
+      return subject;
+    });
+    if (!subject) {
+      console.error('Subject not found');
+    }
+    return subject;
+  }
+  
 
   const handleTaskClick = (task) => {
     setView('taskDetails'); 
@@ -233,6 +244,9 @@ function Courses({ client, currentUser }) {
       });
   }
 
+  const findTasks = (tasks, selectedTask) => tasks.find(task =>
+    task.timer.some())
+
 
   useEffect(() => {
     const getCourses = () => {
@@ -275,28 +289,36 @@ function Courses({ client, currentUser }) {
     }
   }, [currentUser, client])
 
+  useEffect(() => {
+    const getTasks = async () => {
+      try {
+        const res = client.get('/api/subjects/', {}, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        });
+        setTasks(res.data.results);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, []);
+
   return (
     <>
       {currentUser ? (
         <Container>
-          <div className='d-flex justify-content-between align-items-center'>
-            <h1>Cursos</h1>
-            <Button onClick={handleCreateCourseClick} variant='light' size='sm'>
-              Nuevo curso
-            </Button>
-          </div>
+          <h1 className='text-center'>Cursos</h1>
 
           <hr />
           <Row>
             <Col md='auto'>
-              {courses.length === 0 && (
-                <h4>No tienes cursos todavia. Empieza uno nuevo!</h4>
-              )}
               <CourseNavbar
                 courses={courses}
                 onCourseClick={handleCourseClick}
                 onSubjectClick={handleSubjectClick}
                 onTaskClick={handleTaskClick}
+                onNewCourseClick={handleCreateCourseClick}
               />
             </Col>
             <Col>
@@ -348,7 +370,7 @@ function Courses({ client, currentUser }) {
               ) : view === 'updateTask' && selectedTask ? (
                 <UpdateTask 
                   client={client}
-                  subject={findSubject(subjects, selectedTask)}
+                  subject={findSubject(courses, selectedTask)}
                   task={selectedTask}
                   onCancel={handleCancelUpdateTask}
                   onUpdate={handleTaskUpdated}

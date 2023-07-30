@@ -71,7 +71,7 @@ function CourseDetails({
         </Card.Body>
         <Card.Footer>
           <Button variant='success' size='sm' onClick={() => setShowCreateSubject(true)}>
-            Agregar asignatura
+            Añadir Asignatura
           </Button>
         </Card.Footer>
         {showCreateSubject && (

@@ -64,7 +64,7 @@ function SubjectDetails({
       </Card.Body>
       <Card.Footer>
         <Button variant='success' size='sm' onClick={() => setShowCreateTask(true)}>
-          Añadir tarea
+          Añadir Tarea
         </Button>
       </Card.Footer>
       {showCreateTask && (

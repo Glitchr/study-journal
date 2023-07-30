@@ -13,8 +13,8 @@ const Timer = ({ client, task, onStop }) => {
   const [isBreak, setIsBreak] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [savedDuration, setSavedDuration] = useState(null);
-  const audioStartBreak = useMemo(() => new Audio(process.env.PUBLIC_URL + 'Singing bowl startBreak.mp3'), []);
-  const audioStopBreak = useMemo(() => new Audio(process.env.PUBLIC_URL + 'Singing bowl stopBreak.mp3'), []);
+  const audioStartBreak = new Audio(process.env.PUBLIC_URL + 'Singing bowl startBreak.mp3');
+  const audioStopBreak = new Audio(process.env.PUBLIC_URL + 'Singing bowl stopBreak.mp3');
 
   const percentage = !isPaused
   ? (duration / (isBreak ? breakDuration : workDuration)) * 100
@@ -99,10 +99,10 @@ const Timer = ({ client, task, onStop }) => {
     }
   };
 
-  const handleStartBreak = useCallback(async () => {
+  const handleStartBreak = async () => {
     try {
       await client.patch(timer.url, {
-        is_running: false
+        is_completed: true
       }, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`
@@ -112,22 +112,26 @@ const Timer = ({ client, task, onStop }) => {
     } catch (error) {
       console.error(error);
     }
-  }, [client, timer.url, audioStartBreak]);
+  };
 
-  const handleStopBreak = useCallback(async () => {
+  const handleStopBreak = async () => {
     try {
-      await client.patch(timer.url, {
-        is_running: true
+      // Send a request to start a new timer with the same duration as the old one
+      const response = await client.post('/api/timer/', {
+        duration: timer.duration,
+        task: task.url,
       }, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`
         }
       });
+      setIsRunning(true);
+      setTimer(response.data);
       audioStopBreak.play();
     } catch (error) {
       console.error(error);
     }
-  }, [client, timer.url, audioStopBreak]);
+  };
 
 
   useEffect(() => {

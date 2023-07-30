@@ -16,11 +16,15 @@ function CreateCourse({ client, onCreate, onCancel }) {
       client.get('/api/categories/')
         .then(res => {
           setCategories(res.data.results);
+
+          if (categories.length > 0) {
+            setCategory(categories[0].url);
+          }
         })
         .catch(error => {
           console.log(error);
         });
-    }, [client]);
+    }, [client, categories]);
   
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -75,10 +79,12 @@ function CreateCourse({ client, onCreate, onCancel }) {
           <Col>
             <Form.Group className='mb-3' controlId="category">
               <Form.Label>Categoría</Form.Label>
-              <Form.Select value={category} onChange={e => setCategory(e.target.value)}>
-                {categories.map(category => (
-                  <option key={category.url} value={category.url}>{category.name}</option>
-                ))}
+              <Form.Select 
+                value={category} 
+                onChange={e => setCategory(e.target.value)}>
+                  {categories.map(category => (
+                    <option key={category.url} value={category.url}>{category.name}</option>
+                  ))}
               </Form.Select>
             </Form.Group>
           </Col>

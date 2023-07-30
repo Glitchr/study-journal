@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
+import { Nav, NavDropdown, Dropdown } from 'react-bootstrap';
 
 import './Shared.css';
 
@@ -21,6 +22,10 @@ function Header({
     localStorage.removeItem('token');
     navigate('/logout');
   }
+  
+  const handleCourseClick = (e) => {
+    navigate('/courses');
+  }
 
   return (
       <>
@@ -30,11 +35,10 @@ function Header({
               <Link to="/" className="navbar-brand-link">
                 <Image
                   alt="Logo"
-                  src={process.env.PUBLIC_URL + '/logo.png'}
+                  src={process.env.PUBLIC_URL + '/logo.svg'}
                   width="30"
                   height="30"
                   className="d-inline-block align-top"
-                  roundedCircle
                 />{' '}
                 Study Journal
               </Link>
@@ -43,19 +47,13 @@ function Header({
             <Navbar.Collapse className="justify-content-end">
               {currentUser ? (
                 <>
-                  <Navbar.Text>Conectado como: {currentUser}</Navbar.Text>
-                  <Navbar.Text className="">
-                    <Link to="/courses">
-                      <Button variant="light" className="ms-3">Mis cursos</Button>
-                    </Link>
-                  </Navbar.Text>
-                  <Navbar.Text>
-                    <form onSubmit={(e) => submitLogout(e)}>
-                      <Button type="submit" variant="light" className="ms-3">
-                        Cerrar sesión
-                      </Button>
-                    </form>
-                  </Navbar.Text>
+                  <Navbar.Text className="ms-auto">Conectado como: </Navbar.Text>
+                  <NavDropdown className="ms-2" align='end' title={currentUser} id='userLink'>
+                    <NavDropdown.Item>Perfil</NavDropdown.Item>
+                    <NavDropdown.Item onClick={(e) => handleCourseClick(e)}>Mis cursos</NavDropdown.Item>
+                    <Dropdown.Divider />
+                    <NavDropdown.Item onClick={(e) => submitLogout(e)}>Cerrar sesión</NavDropdown.Item>
+                  </NavDropdown>
                 </>
               ) : (
                 <>

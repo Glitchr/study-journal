@@ -5,8 +5,68 @@
 .nav-border {
     border-right: 1px solid #ddd;
     width: 325px;
+
+}
+
+.scroll {
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .indent {
     padding-left: 2rem;
+}
+
+.nav-btn {
+    width: -webkit-fill-available;
+    text-align: left !important;
+}
+
+.arrow {
+    color: var(--accent-100);
+}
+
+.form-floating>.form-control, .form-floating>.form-control-plaintext {
+    padding: 1rem .75rem;
+}
+.form-floating>.form-control, .form-floating>.form-control-plaintext, .form-floating>.form-select {
+    height: calc(1.5rem + calc(var(--bs-border-width) * 2)) !important;
+    min-height: calc(2.5rem + calc(var(--bs-border-width) * 2)) !important;
+    line-height: 1.25;
+}
+
+.floating-label-form {
+    font-size: 0.8rem;
+    margin: 1%;
+}
+
+.form-floating > label {
+    top: 15%;
+    transform: translateY(-15%);
+}
+
+.form-floating:focus-within > label {
+    top:-0.3rem;
+}
+
+.inline-form {
+    display: flex;
+  }
+  
+.inline-form .form-floating {
+    flex: 1;
+}
+
+.inline-form button {
+    margin-left: 0.5rem;
+}
+  
+.form-style {
+    width: 250px;
+}
+
+.btn-nav-style {
+    height: 42px;
+    margin-bottom: 14px;
+    margin-left: 3px;
 }
