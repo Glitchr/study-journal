@@ -9,6 +9,11 @@
     --bg-100: #fafaf9;
     --bg-200: #f5f5f4;
     --bg-300: #e0e2e5;
+    --logo-pink: #ff8ab8;
+    --logo-orange: #ffaa64;
+    --logo-yellow: #ffe45e;
+    --logo-brown: #8b4513;
+    --logo-red: #ff0000;
   }
   
   body {
@@ -28,13 +33,3 @@
   a {
     color: var(--accent-100);
   }
-  
-  .btn-primary {
-    background-color: var(--primary-100);
-    border-color: var(--primary-300);
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-200);
-  }
-  

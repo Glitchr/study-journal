@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Form } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Form, Col, Card } from 'react-bootstrap';
 
 import TimerCircle from './TimerCircle';
 
@@ -20,6 +20,7 @@ const Timer = ({ client, task, onStop }) => {
   ? (duration / (isBreak ? breakDuration : workDuration)) * 100
   : (savedDuration / (isBreak ? breakDuration : workDuration)) * 100;
 
+
   const handleStart = async () => {
     // Create and start the timer
     try {
@@ -39,20 +40,38 @@ const Timer = ({ client, task, onStop }) => {
   }
 
   const handleStop = async () => {
-    // Send a stop request and stop the timer
-    try {
-      await client.patch(timer.url, {
-        is_completed: true,
-      }, {
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
+    // Only send a stop request if the timer is not currently on a break
+    if (isBreak) {
+      // Send a stop request and stop the timer
+      try {
+        await client.patch(timer.url, {
+          is_running: true,
+        }, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        });
+        setIsRunning(false);
+        setIsBreak(false);
+        if (onStop) onStop();
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+        try {
+          await client.patch(timer.url, {
+            is_completed: true,
+          }, {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          });
+          setIsRunning(false);
+          setIsBreak(false);
+          if (onStop) onStop();
+        } catch (error) {
+          console.error(error);
         }
-      });
-      setIsRunning(false);
-      setIsBreak(false);
-      if (onStop) onStop();
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -102,7 +121,8 @@ const Timer = ({ client, task, onStop }) => {
   const handleStartBreak = async () => {
     try {
       await client.patch(timer.url, {
-        is_completed: true
+        is_completed: true,
+        is_running: true,
       }, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`
@@ -116,17 +136,14 @@ const Timer = ({ client, task, onStop }) => {
 
   const handleStopBreak = async () => {
     try {
-      // Send a request to start a new timer with the same duration as the old one
-      const response = await client.post('/api/timer/', {
-        duration: timer.duration,
-        task: task.url,
+      await client.patch(timer.url, {
+        is_running: true,
+        is_completed: false,
       }, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`
         }
       });
-      setIsRunning(true);
-      setTimer(response.data);
       audioStopBreak.play();
     } catch (error) {
       console.error(error);
@@ -141,9 +158,9 @@ const Timer = ({ client, task, onStop }) => {
           if (duration === 0) {
             setIsBreak(!isBreak);
             if (isBreak) {
-              handleStartBreak();
-            } else {
               handleStopBreak();
+            } else {
+              handleStartBreak();
             }
             return isBreak ? workDuration : breakDuration;
           } else {
@@ -153,7 +170,7 @@ const Timer = ({ client, task, onStop }) => {
       }, 1000);
       return () => clearInterval(intervalId);
     }
-  }, [isRunning, isBreak, workDuration, breakDuration, handleStartBreak, handleStopBreak]);
+  }, [isRunning, isBreak, workDuration, breakDuration]);
 
 
   useEffect(() => {
@@ -166,45 +183,47 @@ const Timer = ({ client, task, onStop }) => {
         setDuration(isBreak ? breakDuration : workDuration);
       }
     }
-  }, [isBreak, isRunning, workDuration, breakDuration, duration]);
+  }, [isBreak, isRunning, workDuration, breakDuration]);
 
   return (
     <div>
-      <Form className='m-3'>
-        <Form.Group>
-          <Form.Label>Duración</Form.Label>
-          <Form.Control
-            type="number"
-            value={workDuration / 60}
-            onChange={e => setWorkDuration(e.target.value * 60)}
-            disabled={isRunning || isPaused}
-          />
-        </Form.Group>
+      <Card className='mb-3 rounded'>
+        <Form className='m-3'>
+          <Form.Group className='mb-3'>
+            <Form.Label><Card.Title>Duración</Card.Title></Form.Label>
+            <Form.Control
+              type="number"
+              value={workDuration / 60}
+              onChange={e => setWorkDuration(e.target.value * 60)}
+              disabled={isRunning || isPaused}
+            />
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Duración de descanso</Form.Label>
-          <Form.Control
-            type="number"
-            value={breakDuration / 60}
-            onChange={e => setBreakDuration(e.target.value * 60)}
-            disabled={isRunning || isPaused}
+          <Form.Group>
+            <Form.Label><Card.Title>Duración de descanso</Card.Title></Form.Label>
+            <Form.Control
+              type="number"
+              value={breakDuration / 60}
+              onChange={e => setBreakDuration(e.target.value * 60)}
+              disabled={isRunning || isPaused}
+            />
+          </Form.Group>
+        </Form>
+        <div className='d-flex justify-content-center'>
+          <TimerCircle
+            percentage={percentage}
+            duration={duration}
+            savedDuration={savedDuration}
+            onStart={handleStart}
+            onStop={handleStop}
+            onPause={handlePause}
+            onResume={handleResume}
+            isPaused={isPaused}
+            isRunning={isRunning}
+            isBreak={isBreak}
           />
-        </Form.Group>
-      </Form>
-      <div className='d-flex justify-content-center'>
-        <TimerCircle
-          percentage={percentage}
-          duration={duration}
-          savedDuration={savedDuration}
-          onStart={handleStart}
-          onStop={handleStop}
-          onPause={handlePause}
-          onResume={handleResume}
-          isPaused={isPaused}
-          isRunning={isRunning}
-          isBreak={isBreak}
-        />
-      </div>
+        </div>
+      </Card>
     </div>
   );
 };

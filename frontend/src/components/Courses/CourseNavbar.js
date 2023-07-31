@@ -46,7 +46,7 @@ function CourseNavbar({
     };
 
     return (
-      <div>
+      <div className='mb-5'>
         {courses.length > 0 ? (
           <div className='nav-border'>
           <div className="d-inline-flex align-items-center">

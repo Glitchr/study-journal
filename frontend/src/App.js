@@ -26,6 +26,7 @@ function App() {
   const [modalShow, setModalShow] = useState(false);
   const [achievement, setAchievement] = useState('');
   const [userURL, setUserURL] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');

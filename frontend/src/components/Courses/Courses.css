@@ -14,8 +14,14 @@
 }
 
 .indent {
-    padding-left: 2rem;
-}
+    padding-left: 1.5rem;
+  }
+  
+  .indent > div {
+    border-left: 1px solid #ddd;
+    padding-left: 0.5rem;
+  }
+  
 
 .nav-btn {
     width: -webkit-fill-available;
@@ -69,4 +75,29 @@
     height: 42px;
     margin-bottom: 14px;
     margin-left: 3px;
+}
+
+
+.card {
+  border: none !important;
+  border-radius: 4px !important;
+}
+
+.card-header {
+  background-color: var(--accent-100) !important;
+  color: white !important;
+  border-radius: inherit !important;
+}
+
+.card-title {
+  font-size: 18px !important;
+  color: #292524 !important;
+}
+
+.card-text {
+  color: #78716c !important;
+}
+
+.card-footer {
+  background-color: transparent !important;
 }

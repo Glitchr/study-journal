@@ -37,9 +37,18 @@ class Course(models.Model):
         """Retorna el progreso del curso en numero decimal."""
         total_subjects = self.subjects.count()
         completed_subjects = self.subjects.filter(status='co').count()
+        total_tasks = 0
+        completed_tasks = 0
+        for subject in self.subjects.all():
+            total_tasks += subject.tasks.count()
+            completed_tasks += subject.get_progress() * subject.tasks.count()
 
-        if total_subjects > 0:
+        if total_subjects > 0 and total_tasks > 0:
+            return (completed_subjects / total_subjects + completed_tasks / total_tasks) / 2
+        elif total_subjects > 0:
             return completed_subjects / total_subjects
+        elif total_tasks > 0:
+            return completed_tasks / total_tasks
         else:
             return 0
 
@@ -56,11 +65,3 @@ class Course(models.Model):
         elif progress == 1:
             self.status = 'co'
         self.save()
-
-    def get_total_time(self):
-        """Retorna el tiempo total gastado en el curso."""
-        total_time = timedelta()
-        for subject in self.subjects.all():
-            for task in subject.tasks.all():
-                total_time += task.timer.duration
-        return total_time

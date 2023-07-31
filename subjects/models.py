@@ -56,10 +56,3 @@ class Subject(models.Model):
         elif progress == 1:
             self.status = 'co'
         self.save()
-
-    def get_total_time(self):
-        """Retorna el tiempo total gastado en el tema."""
-        total_time = timedelta()
-        for task in self.tasks.all():
-            total_time += task.timer.duration
-        return total_time

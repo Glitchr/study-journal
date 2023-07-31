@@ -73,11 +73,11 @@ function CreateSubject({ client, course, onCreate, onCancel }) {
       </Row>
 
       <Row>
-        <Col className='d-grip gap-2'>
+        <Col className='d-grid gap-2'>
           <Button variant='success' type='submit'>Crear Asignatura</Button>
         </Col>
 
-        <Col className='d-grip gap-2'>
+        <Col className='d-grid gap-2'>
           <Button variant='secondary' onClick={onCancel}>Cancelar</Button>
         </Col>
       </Row>

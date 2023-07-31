@@ -2,3 +2,44 @@
     margin-left: 25%;
     margin-right: 25%;
 }
+
+@media (max-width: 576px) {
+    .responsive-h1 {
+      font-size: 22px !important;
+      color: '#f88' !important;
+    }
+
+    .responsive-h3 {
+        font-size: 10px !important;
+        color: '#f88' !important;
+    }
+}
+  
+@media (min-width: 577px) and (max-width: 768px) {
+    .responsive-h1 {
+        font-size: 40px !important;
+        color: '#f88' !important;
+    }
+
+    .responsive-h3 {
+        font-size: 15px !important;
+        color: '#f88' !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .responsive-h3 {
+      font-size: 15px;
+      color: '#f88' !important;
+    }
+  }
+  
+ @media (min-width: 993px) {
+    .responsive-h3 {
+      font-size: 15px;
+      color: '#f88' !important;
+    }
+}
+
+
+  

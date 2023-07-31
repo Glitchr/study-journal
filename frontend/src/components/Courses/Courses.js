@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Button, Row, Col, } from 'react-bootstrap';
+import { Container, Row, Col, } from 'react-bootstrap';
 
 import CourseNavbar from './CourseNavbar';
 import CreateCourse from './CreateCourse';
@@ -17,8 +17,6 @@ import UpdateTask from '../Tasks/UpdateTask';
 function Courses({ client, currentUser }) {
   const [view, setView] = useState('home');
   const [courses, setCourses] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [tasks, setTasks] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -244,10 +242,6 @@ function Courses({ client, currentUser }) {
       });
   }
 
-  const findTasks = (tasks, selectedTask) => tasks.find(task =>
-    task.timer.some())
-
-
   useEffect(() => {
     const getCourses = () => {
       client
@@ -268,41 +262,6 @@ function Courses({ client, currentUser }) {
       getCourses();
     }
   }, [currentUser, client]);
-
-  useEffect(() => {
-    const getSubjects = () => {
-      client.get('/api/subjects/', {
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-      })
-        .then(res => {
-          setSubjects(res.data.results);
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    }
-
-    if (currentUser) {
-      getSubjects();
-    }
-  }, [currentUser, client])
-
-  useEffect(() => {
-    const getTasks = async () => {
-      try {
-        const res = client.get('/api/subjects/', {}, {
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          }
-        });
-        setTasks(res.data.results);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }, []);
 
   return (
     <>
