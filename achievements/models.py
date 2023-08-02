@@ -1,3 +1,5 @@
+import base64
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -46,13 +48,14 @@ class Award(models.Model):
         """Retorna el logro de un usuario con su fecha y nivel."""
         return f'{self.user.username} - {self.achievement}'
 
-
 @receiver(post_save, sender=Award)
 def send_achievement_notification(sender, instance, created, **kwargs):
     """
     Envía una notificación al usuario cuando se ha creado un nuevo premio.
     """
     if created:
+        with open(instance.achievement.badge.path, 'rb') as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f'user_{instance.user.id}',
@@ -61,7 +64,7 @@ def send_achievement_notification(sender, instance, created, **kwargs):
                 'achievement': {
                     'name': instance.achievement.name,
                     'description': instance.achievement.description,
-                    'badge': instance.achievement.badge.url
+                    'badge': f'data:image/svg+xml;base64,{encoded_string}'
                 }
             }
         )

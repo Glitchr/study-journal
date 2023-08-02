@@ -49,7 +49,7 @@ function Header({
                 <>
                   <Navbar.Text className="ms-auto">Conectado como: </Navbar.Text>
                   <NavDropdown className="ms-2" align='end' title={currentUser} id='userLink'>
-                    <NavDropdown.Item>Perfil</NavDropdown.Item>
+                    {/* <NavDropdown.Item>Perfil</NavDropdown.Item> */}
                     <NavDropdown.Item onClick={(e) => handleCourseClick(e)}>Mis cursos</NavDropdown.Item>
                     <Dropdown.Divider />
                     <NavDropdown.Item onClick={(e) => submitLogout(e)}>Cerrar sesión</NavDropdown.Item>

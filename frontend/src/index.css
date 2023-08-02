@@ -33,3 +33,7 @@
   a {
     color: var(--accent-100);
   }
+
+  textarea {
+    white-space: pre-wrap;
+  }

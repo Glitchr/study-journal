@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, ProgressBar } from 'react-bootstrap';
 import CreateSubject from '../Subjects/CreateSubject';
+import { FaBookOpen } from 'react-icons/fa';
+import { FaCalendarDays, FaCalendarCheck, FaChartSimple, FaBoxesStacked, FaRegClock, FaBarsProgress } from "react-icons/fa6";
 
+import { secondsToHms } from '../../utils';
 
 function CourseDetails({ 
   client,
@@ -32,7 +35,7 @@ function CourseDetails({
     }, [client, course.category]);
 
     useEffect(() => {
-      const fetchTaskData = async () => {
+      const fetchCourseData = async () => {
         try {
           const response = await client.get(course.url, {
             headers: {
@@ -44,7 +47,7 @@ function CourseDetails({
           console.error(error);
         }
       }
-      fetchTaskData();
+      fetchCourseData();
     }, [client, course]);
   
     return (
@@ -61,8 +64,11 @@ function CourseDetails({
 
         <Card className='mb-3 rounded'>
           <Card.Body>
-              <Card.Title>Descripción</Card.Title>
-              <Card.Text>{courseData.description}</Card.Text>
+            <div className='d-flex'>
+              <FaBookOpen/>
+              <Card.Title className='ms-3'>Descripción</Card.Title>
+            </div>
+            <Card.Text>{courseData.description}</Card.Text>
           </Card.Body>
         </Card>
 
@@ -70,12 +76,18 @@ function CourseDetails({
           <Card.Body>
             <Row>
               <Col className='mb-3'>
-                <Card.Title>Fecha de inicio</Card.Title>
+                <div className='d-flex'>
+                  <FaCalendarDays />
+                  <Card.Title className='ms-2'>Fecha de inicio</Card.Title>
+                </div>
                 <Card.Text>{courseData.start_date}</Card.Text>
               </Col>
 
               <Col>
-                <Card.Title>Fecha de finalización</Card.Title>
+                <div className='d-flex'>
+                  <FaCalendarCheck />
+                  <Card.Title className='ms-2'>Fecha de finalización</Card.Title>
+                </div>
                 <Card.Text>{courseData.end_date}</Card.Text>
               </Col>
             </Row>
@@ -86,13 +98,27 @@ function CourseDetails({
           <Card.Body>
             <Row>
               <Col className='mb-3'>
-                <Card.Title>Estado</Card.Title>
+                <div className='d-flex'>
+                  <FaChartSimple />
+                  <Card.Title className='ms-2'>Estado</Card.Title>
+                </div>
                 <Card.Text>{STATUS[courseData.status]}</Card.Text>
               </Col>
 
               <Col>
-                <Card.Title>Categoria</Card.Title>
+                <div className='d-flex'>
+                  <FaBoxesStacked />
+                  <Card.Title className='ms-2'>Categoría</Card.Title>
+                </div>
                 <Card.Text>{categoryName}</Card.Text>
+              </Col>
+
+              <Col>
+                <div className='d-flex'>
+                  <FaRegClock />
+                  <Card.Title className='ms-2'>Tiempo</Card.Title>
+                </div>
+                  <Card.Text>{secondsToHms(courseData.total_time)}</Card.Text>
               </Col>
             </Row>
           </Card.Body>
@@ -100,7 +126,10 @@ function CourseDetails({
 
         <Card className='mb-3 rounded'>
           <Card.Body>
-            <Card.Title>Progreso</Card.Title>
+            <div className='d-flex'>
+              <FaBarsProgress />
+              <Card.Title className='ms-2'>Progreso</Card.Title>
+            </div>
             <ProgressBar now={courseData.progress * 100} />
           </Card.Body>
         </Card>

@@ -10,6 +10,7 @@ import SignUp from './components/SignUp/SignUp';
 import Home from './components/Home/Home';
 import Courses from './components/Courses/Courses';
 import Notification from './components/Achievements/Notification';
+import Footer from './components/Shared/Footer/Footer';
 
 
 const client = axios.create({
@@ -137,6 +138,7 @@ function App() {
               }
             />
           </Routes>
+        {/* <Footer /> */}
       </Router>
     </div>
   );

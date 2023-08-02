@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
+import { FaBookOpen } from 'react-icons/fa';
+import { FaCalendarDays, FaCalendarDay, FaCalendarCheck, FaChartSimple, FaRegClock } from "react-icons/fa6";
+
 
 import Timer from '../Timer/Timer';
 import { secondsToHms } from '../../utils';
@@ -73,20 +76,21 @@ function TaskDetails({
         <Col>
           <Card className='mb-3 rounded'>
             <Card.Body>
-              <Card.Title>Notas</Card.Title>
+              <div className='d-flex'>
+                <FaBookOpen/>
+                <Card.Title className='ms-3'>Notas</Card.Title>
+              </div>
               <Card.Text>{taskData.description}</Card.Text>
             </Card.Body>
           </Card>
 
           <Card className='mb-3 rounded'>
             <Card.Body>
-              <Row className='mb-3'>
-                <Col>
-                  <Card.Title>Fecha de entrega</Card.Title>
+                  <div className='d-flex mb-3'>
+                    <FaCalendarDay />
+                    <Card.Title className='ms-2'>Fecha de entrega</Card.Title>
+                  </div>
                   <Card.Text>{taskData.due_date}</Card.Text>
-                </Col>
-
-              </Row>
             </Card.Body>
           </Card>
 
@@ -94,12 +98,18 @@ function TaskDetails({
             <Card.Body>
               <Row>
                 <Col className='mb-3'>
-                  <Card.Title>Tiempo</Card.Title>
+                  <div className='d-flex'>
+                    <FaRegClock />
+                    <Card.Title className='ms-2'>Tiempo</Card.Title>
+                  </div>
                   <Card.Text>{secondsToHms(taskData.total_time)}</Card.Text>
                 </Col>
 
                 <Col>
-                  <Card.Title>Estado</Card.Title>
+                  <div className='d-flex'>
+                    <FaChartSimple />
+                    <Card.Title className='ms-2'>Estado</Card.Title>
+                  </div>
                   <Card.Text>{STATUS[taskData.status]}</Card.Text>
                 </Col>                      
               </Row>
@@ -110,12 +120,18 @@ function TaskDetails({
             <Card.Body>
               <Row>
                 <Col className='mb-3'>
-                  <Card.Title>Fecha de Inicio</Card.Title>
+                  <div className='d-flex'>
+                    <FaCalendarDays />
+                    <Card.Title className='ms-2'>Fecha de inicio</Card.Title>
+                  </div>
                   <Card.Text>{taskData.start_date}</Card.Text>
                 </Col>
 
                 <Col>
-                  <Card.Title>Fecha de finalización</Card.Title>
+                  <div className='d-flex'>
+                    <FaCalendarCheck />
+                    <Card.Title className='ms-2'>Fecha de finalización</Card.Title>
+                  </div>
                   <Card.Text>{taskData.end_date}</Card.Text>
                 </Col>
               </Row>

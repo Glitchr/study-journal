@@ -177,13 +177,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],   
 }
-
-WHITENOISE_MIMETYPES = {
-    '.svg': 'image/svg+xml',
-}
-
-
-import mimetypes
-
-mimetypes.add_type("image/svg+xml", ".svg", True)
-mimetypes.add_type("image/svg+xml", ".svgz", True)

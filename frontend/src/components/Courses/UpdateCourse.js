@@ -12,15 +12,28 @@ function UpdateCourse({ client, course, onCancel, onUpdate }) {
     const [categories, setCategories] = useState([]);
     
     useEffect(() => {
-      // Fetch the available categories from the API
-      client.get('/api/categories/')
-        .then(res => {
-          setCategories(res.data.results);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      const fetchedCategories = [];
+
+      const fetchData = (url) => {
+        client.get(url)
+          .then(res => {
+            fetchedCategories.push(...res.data.results);
+    
+            // Check if there is a next page to fetch
+            if (res.data.next) {
+              fetchData(res.data.next);
+            } else {
+              setCategories(fetchedCategories);
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      };
+    
+      fetchData('/api/categories/');
     }, [client]);
+    
   
     const handleSubmit = (e) => {
       e.preventDefault();

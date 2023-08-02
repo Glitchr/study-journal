@@ -35,7 +35,9 @@ function CourseNavbar({
         course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.subjects.some((subject) =>
           subject.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+        ) ||
+        course.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.status.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
 
@@ -53,7 +55,7 @@ function CourseNavbar({
             <Form className="form-style" onKeyDown={handleKeyPress}>
               <FloatingLabel
                 controlId="searchBar"
-                label="Buscar"
+                label="Buscar Curso"
                 className="mb-3 floating-label-form"
               >
                 <Form.Control type="text" placeholder="Buscar curso" onChange={(e) => setSearchTerm(e.target.value)} />
