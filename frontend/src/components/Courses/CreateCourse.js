@@ -24,7 +24,7 @@ function CreateCourse({ client, onCreate, onCancel }) {
         .catch(error => {
           console.log(error);
         });
-    }, [client, categories]);
+    }, [client]);
   
     const handleSubmit = (e) => {
       e.preventDefault();
